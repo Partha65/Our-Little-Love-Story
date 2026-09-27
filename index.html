@@ -1,400 +1,2573 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Our Journey</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500&family=Quicksand:wght@300;500;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; overflow: hidden; }
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 
-        body {
-            background-color: #080810; /* Deep space black */
-            height: 100vh;
-            width: 100vw;
-            color: white;
-            font-family: 'Quicksand', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            touch-action: manipulation;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent; /* Removes blue highlight on mobile */
-        }
+<title>Our Little Love Story ♡</title>
 
-        /* --- LAYERS --- */
-        #bg-canvas {
-            position: absolute;
-            top: 0; left: 0;
-            z-index: 0;
-            opacity: 0.5;
-        }
+<style>
 
-        #main-canvas {
-            position: absolute;
-            top: 0; left: 0;
-            z-index: 10;
-        }
+/* =========================================================
+   FONTS
+========================================================= */
 
-        /* --- UI TEXT --- */
-        .ui-layer {
-            position: absolute;
-            z-index: 20;
-            text-align: center;
-            width: 80%;
-            pointer-events: none; 
-        }
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&family=Pacifico&display=swap');
 
-        h1.title {
-            font-family: 'Cinzel', serif;
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            text-shadow: 0 0 20px rgba(255,255,255,0.5);
-            transition: opacity 1s;
-        }
 
-        .subtitle {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            color: #aaa;
-            margin-bottom: 40px;
-            animation: pulse 2s infinite;
-            transition: opacity 1s;
-        }
+/* =========================================================
+   ROOT
+========================================================= */
 
-        /* --- MEMORY TEXTS --- */
-        .memory-box {
-            position: absolute;
-            bottom: 12%; 
-            width: 100%;
-            text-align: center;
-            z-index: 30;
-            pointer-events: none;
-            padding: 0 20px;
-            transition: opacity 0.8s, transform 0.8s;
-            opacity: 0;
-            transform: translateY(20px);
-        }
+:root{
+    --pink:#ffb6c9;
+    --pink2:#ffdce6;
+    --rose:#ed7898;
+    --dark:#5c3442;
+    --cream:#fffaf5;
+    --paper:#fffdf8;
+    --red:#e96786;
+    --shadow:rgba(101,43,61,.18);
+}
 
-        .memory-box.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
 
-        .date {
-            color: #ff9a9e;
-            font-weight: 700;
-            letter-spacing: 1px;
-            font-size: 1rem;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-        }
+/* =========================================================
+   RESET
+========================================================= */
 
-        .story {
-            font-size: 1.2rem;
-            line-height: 1.5;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-            max-width: 600px;
-            margin: 0 auto;
-        }
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
 
-        .tap-hint {
-            margin-top: 25px;
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.5);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            animation: pulse 1.5s infinite;
-        }
+html,
+body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+}
 
-        /* --- FINAL CARD --- */
-        .final-card {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%) scale(0.8);
-            width: 85%; max-width: 350px;
-            background: rgba(20, 20, 30, 0.85); 
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.2);
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 50;
-            box-shadow: 0 0 50px rgba(255, 118, 117, 0.2);
-            transition: all 1s ease;
-        }
+body{
+    font-family:"DM Sans",sans-serif;
+    background:#f7cbd6;
+    color:var(--dark);
+}
 
-        .final-card.show {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
-            pointer-events: auto;
-        }
 
-        .photo-frame {
-            width: 100%;
-            height: 250px;
-            background: #000;
-            margin-bottom: 20px;
-            overflow: hidden;
-            border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.3);
-        }
+/* =========================================================
+   MAIN BACKGROUND
+========================================================= */
 
-        .photo-frame img {
-            width: 100%; height: 100%;
-            object-fit: cover;
-            opacity: 0.9;
-        }
+.app{
 
-        .btn-gallery {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 25px;
-            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
-            color: #333;
-            text-decoration: none;
-            font-weight: bold;
-            border-radius: 25px;
-            font-size: 0.9rem;
-            box-shadow: 0 4px 15px rgba(255, 154, 158, 0.4);
-            transition: transform 0.2s;
-        }
-        .btn-gallery:active { transform: scale(0.95); }
+    width:100%;
+    height:100svh;
 
-        @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
-        .hidden { opacity: 0; pointer-events: none; }
+    position:relative;
 
-    </style>
+    overflow:hidden;
+
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            #fff 0,
+            transparent 18%
+        ),
+        radial-gradient(
+            circle at 90% 80%,
+            #f8aebe 0,
+            transparent 28%
+        ),
+        linear-gradient(
+            135deg,
+            #ffdfe7,
+            #f8b8ca
+        );
+}
+
+
+/* Paper texture */
+
+.app:before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    opacity:.35;
+
+    pointer-events:none;
+
+    background-image:
+        radial-gradient(
+            rgba(110,60,75,.12) .7px,
+            transparent .7px
+        );
+
+    background-size:7px 7px;
+}
+
+
+/* =========================================================
+   FLOATING DOODLES
+========================================================= */
+
+.doodle{
+
+    position:absolute;
+
+    color:#ffffff88;
+
+    font-family:"Caveat";
+
+    pointer-events:none;
+
+    z-index:1;
+}
+
+.d1{
+    top:7%;
+    left:7%;
+    font-size:38px;
+    transform:rotate(-15deg);
+}
+
+.d2{
+    top:17%;
+    right:8%;
+    font-size:25px;
+    transform:rotate(15deg);
+}
+
+.d3{
+    bottom:14%;
+    left:8%;
+    font-size:30px;
+    transform:rotate(8deg);
+}
+
+.d4{
+    bottom:8%;
+    right:10%;
+    font-size:34px;
+    transform:rotate(-12deg);
+}
+
+
+/* =========================================================
+   APP CONTENT
+========================================================= */
+
+#story{
+
+    width:100%;
+    height:100%;
+
+    position:relative;
+
+    z-index:5;
+}
+
+
+/* =========================================================
+   SCENES
+========================================================= */
+
+.scene{
+
+    position:absolute;
+
+    inset:0;
+
+    display:none;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:
+        22px
+        20px
+        25px;
+
+}
+
+.scene.active{
+
+    display:flex;
+
+    animation:
+        pageIn
+        .65s
+        cubic-bezier(.2,.8,.2,1);
+}
+
+
+@keyframes pageIn{
+
+    from{
+        opacity:0;
+        transform:
+            scale(.94)
+            rotate(-1deg);
+    }
+
+    to{
+        opacity:1;
+        transform:
+            scale(1)
+            rotate(0);
+    }
+}
+
+
+.content{
+
+    width:min(430px,100%);
+
+    height:100%;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    position:relative;
+}
+
+
+/* =========================================================
+   SCRAPBOOK PAPER
+========================================================= */
+
+.paper{
+
+    width:100%;
+
+    max-height:
+        calc(100svh - 40px);
+
+    padding:
+        25px
+        20px;
+
+    border-radius:24px;
+
+    background:
+
+        linear-gradient(
+            rgba(255,255,255,.75),
+            rgba(255,255,255,.75)
+        );
+
+    box-shadow:
+        0 20px 50px var(--shadow);
+
+    border:
+        1px
+        solid
+        #ffffff;
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+
+/* Paper tape */
+
+.tape{
+
+    position:absolute;
+
+    width:75px;
+
+    height:22px;
+
+    background:#f8d8a3aa;
+
+    top:-4px;
+
+    left:50%;
+
+    transform:
+        translateX(-50%)
+        rotate(-2deg);
+
+    box-shadow:
+        0 2px 4px #0001;
+}
+
+
+/* =========================================================
+   TYPOGRAPHY
+========================================================= */
+
+.small-title{
+
+    font-size:10px;
+
+    letter-spacing:.22em;
+
+    text-transform:uppercase;
+
+    color:#b76b7e;
+
+    margin-bottom:8px;
+}
+
+
+.big-script{
+
+    font-family:"Pacifico",cursive;
+
+    font-size:
+        clamp(
+            44px,
+            13vw,
+            70px
+        );
+
+    line-height:1.05;
+
+    color:var(--rose);
+
+    text-align:center;
+
+    margin:0;
+}
+
+
+.title{
+
+    font-family:"Caveat",cursive;
+
+    font-size:
+        clamp(
+            39px,
+            10vw,
+            58px
+        );
+
+    line-height:.95;
+
+    text-align:center;
+
+    color:var(--dark);
+
+    margin:5px 0 12px;
+}
+
+
+.hand{
+
+    font-family:"Caveat",cursive;
+
+    font-size:25px;
+
+    line-height:1.1;
+
+    color:#815260;
+
+    text-align:center;
+}
+
+
+.date{
+
+    font-family:"Caveat",cursive;
+
+    font-size:22px;
+
+    color:#d2607d;
+
+    text-align:center;
+
+    margin:5px 0 10px;
+}
+
+
+/* =========================================================
+   HEART
+========================================================= */
+
+.big-heart{
+
+    width:105px;
+
+    height:105px;
+
+    margin:
+        5px
+        auto
+        16px;
+
+    position:relative;
+
+    transform:rotate(-45deg);
+
+    background:#f38ba7;
+
+    border-radius:
+        10px
+        0
+        10px
+        0;
+
+    box-shadow:
+        8px
+        10px
+        25px
+        #c95d7d44;
+
+    animation:
+        heartbeat
+        2s
+        ease-in-out
+        infinite;
+}
+
+.big-heart:before,
+.big-heart:after{
+
+    content:"";
+
+    position:absolute;
+
+    width:105px;
+
+    height:105px;
+
+    background:#f38ba7;
+
+    border-radius:50%;
+}
+
+.big-heart:before{
+    top:-52px;
+    left:0;
+}
+
+.big-heart:after{
+    left:52px;
+    top:0;
+}
+
+
+@keyframes heartbeat{
+
+    0%,100%{
+        transform:
+            rotate(-45deg)
+            scale(1);
+    }
+
+    50%{
+        transform:
+            rotate(-45deg)
+            scale(1.08);
+    }
+}
+
+
+/* =========================================================
+   PHOTO POLAROID
+========================================================= */
+
+.polaroid{
+
+    width:min(205px,55vw);
+
+    padding:
+        8px
+        8px
+        27px;
+
+    background:white;
+
+    box-shadow:
+        0
+        15px
+        30px
+        #6c344444;
+
+    position:relative;
+
+    margin:8px auto 13px;
+
+    transform:rotate(-3deg);
+
+    transition:.4s;
+}
+
+.polaroid:nth-child(even){
+    transform:rotate(3deg);
+}
+
+.polaroid img{
+
+    width:100%;
+
+    height:
+        min(
+            210px,
+            28svh
+        );
+
+    display:block;
+
+    object-fit:cover;
+}
+
+.polaroid-note{
+
+    position:absolute;
+
+    bottom:4px;
+
+    left:0;
+
+    right:0;
+
+    text-align:center;
+
+    font:
+        21px
+        "Caveat",
+        cursive;
+
+    color:#573540;
+}
+
+
+/* =========================================================
+   TWO PHOTOS
+========================================================= */
+
+.photo-stack{
+
+    width:100%;
+
+    height:230px;
+
+    position:relative;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    margin:3px 0 10px;
+}
+
+.photo-stack .polaroid{
+
+    position:absolute;
+
+    width:155px;
+}
+
+.photo-stack .polaroid:first-child{
+
+    left:12%;
+
+    transform:
+        rotate(-8deg)
+        translateY(8px);
+
+}
+
+.photo-stack .polaroid:last-child{
+
+    right:12%;
+
+    transform:
+        rotate(7deg)
+        translateY(-5px);
+
+}
+
+
+/* =========================================================
+   MEMORY TEXT
+========================================================= */
+
+.memory{
+
+    text-align:center;
+
+    margin:
+        4px
+        auto
+        9px;
+
+    max-width:360px;
+}
+
+.memory p{
+
+    font:
+        21px
+        1.12
+        "Caveat",
+        cursive;
+
+    color:#704755;
+
+    margin:
+        5px
+        0;
+}
+
+.memory strong{
+    color:#dc6381;
+}
+
+
+/* =========================================================
+   CUTE BUTTON
+========================================================= */
+
+.love-button{
+
+    border:0;
+
+    background:#fff;
+
+    color:#d85e7c;
+
+    font:
+        23px
+        "Caveat",
+        cursive;
+
+    padding:
+        8px
+        22px;
+
+    border-radius:30px;
+
+    box-shadow:
+        0
+        7px
+        18px
+        #b9587330;
+
+    cursor:pointer;
+
+    position:relative;
+
+    transition:.25s;
+
+    margin-top:5px;
+}
+
+.love-button:before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:3px;
+
+    border:
+        1px
+        dashed
+        #f2a5b7;
+
+    border-radius:25px;
+
+}
+
+.love-button:hover,
+.love-button:active{
+
+    transform:
+        translateY(-2px)
+        rotate(-1deg);
+
+    box-shadow:
+        0
+        10px
+        25px
+        #b9587344;
+}
+
+.love-button span{
+    position:relative;
+}
+
+
+/* =========================================================
+   PAGE NUMBER
+========================================================= */
+
+.page-number{
+
+    position:absolute;
+
+    bottom:7px;
+
+    left:0;
+
+    right:0;
+
+    text-align:center;
+
+    font:
+        14px
+        "Caveat",
+        cursive;
+
+    color:#bc8795;
+}
+
+
+/* =========================================================
+   FINAL PHOTO WALL
+========================================================= */
+
+.photo-wall{
+
+    width:100%;
+
+    height:
+        min(
+            48svh,
+            340px
+        );
+
+    position:relative;
+
+    margin:5px 0 9px;
+}
+
+.photo-wall img{
+
+    position:absolute;
+
+    object-fit:cover;
+
+    border:
+        5px
+        solid
+        white;
+
+    box-shadow:
+        0
+        10px
+        20px
+        #71384a33;
+
+    border-radius:2px;
+
+    transition:.3s;
+}
+
+.photo-wall img:nth-child(1){
+    width:45%;
+    height:52%;
+    left:5%;
+    top:5%;
+    transform:rotate(-5deg);
+}
+
+.photo-wall img:nth-child(2){
+    width:38%;
+    height:43%;
+    right:4%;
+    top:2%;
+    transform:rotate(6deg);
+}
+
+.photo-wall img:nth-child(3){
+    width:37%;
+    height:44%;
+    left:10%;
+    bottom:0;
+    transform:rotate(5deg);
+}
+
+.photo-wall img:nth-child(4){
+    width:43%;
+    height:48%;
+    right:8%;
+    bottom:0;
+    transform:rotate(-6deg);
+}
+
+.photo-wall img:nth-child(5){
+    width:29%;
+    height:34%;
+    left:36%;
+    top:34%;
+    transform:rotate(2deg);
+}
+
+
+/* =========================================================
+   ENVELOPE
+========================================================= */
+
+.envelope{
+
+    width:230px;
+
+    height:155px;
+
+    position:relative;
+
+    margin:15px auto;
+
+    cursor:pointer;
+
+    filter:
+        drop-shadow(
+            0
+            14px
+            20px
+            #71384a33
+        );
+
+}
+
+.envelope-body{
+
+    position:absolute;
+
+    inset:0;
+
+    background:#fff8f1;
+
+    border-radius:5px;
+
+}
+
+.envelope-body:before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    clip-path:
+        polygon(
+            0 0,
+            50% 55%,
+            100% 0,
+            100% 100%,
+            0 100%
+        );
+
+    background:#f9dce2;
+
+}
+
+.envelope-flap{
+
+    position:absolute;
+
+    top:0;
+
+    left:0;
+
+    width:100%;
+
+    height:90px;
+
+    background:#ffe9ed;
+
+    clip-path:
+        polygon(
+            0 0,
+            100% 0,
+            50% 100%
+        );
+
+    transform-origin:top;
+
+    transition:.7s;
+
+    z-index:3;
+}
+
+.envelope.open .envelope-flap{
+
+    transform:
+        rotateX(180deg);
+
+}
+
+.seal{
+
+    position:absolute;
+
+    left:50%;
+
+    top:58%;
+
+    transform:translate(-50%,-50%);
+
+    width:42px;
+
+    height:42px;
+
+    border-radius:50%;
+
+    background:#ed7898;
+
+    color:white;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:18px;
+
+    z-index:5;
+
+    box-shadow:
+        0
+        4px
+        10px
+        #8e435555;
+
+}
+
+
+/* =========================================================
+   FINAL LETTER
+========================================================= */
+
+.final-letter{
+
+    width:100%;
+
+    background:#fffdf8;
+
+    padding:
+        18px
+        19px;
+
+    border-radius:8px;
+
+    box-shadow:
+        0
+        10px
+        25px
+        #71384a22;
+
+    font:
+        20px
+        1.12
+        "Caveat",
+        cursive;
+
+    color:#67424e;
+
+    text-align:left;
+
+    max-height:43svh;
+
+    overflow:hidden;
+
+    position:relative;
+}
+
+.final-letter:before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+    bottom:0;
+    left:35px;
+
+    width:1px;
+
+    background:#f2b7c5;
+
+}
+
+.final-letter p{
+
+    margin:
+        5px
+        0
+        8px
+        25px;
+}
+
+.signature{
+
+    text-align:right;
+
+    font:
+        30px
+        "Pacifico",
+        cursive;
+
+    color:#df6684;
+
+    margin-top:8px;
+}
+
+
+/* =========================================================
+   FLOATING PETALS
+========================================================= */
+
+.petal{
+
+    position:absolute;
+
+    top:-30px;
+
+    z-index:3;
+
+    pointer-events:none;
+
+    animation:
+        fall
+        linear
+        forwards;
+
+    color:#fff;
+
+    opacity:.7;
+
+}
+
+@keyframes fall{
+
+    0%{
+        transform:
+            translateY(-30px)
+            rotate(0);
+        opacity:0;
+    }
+
+    15%{
+        opacity:.8;
+    }
+
+    100%{
+        transform:
+            translateY(110svh)
+            translateX(80px)
+            rotate(360deg);
+        opacity:0;
+    }
+}
+
+
+/* =========================================================
+   SMALL PHONES
+========================================================= */
+
+@media(max-height:650px){
+
+    .scene{
+        padding-top:15px;
+        padding-bottom:15px;
+    }
+
+    .paper{
+        padding:
+            18px
+            16px;
+    }
+
+    .title{
+        font-size:38px;
+    }
+
+    .big-script{
+        font-size:48px;
+    }
+
+    .big-heart{
+        width:80px;
+        height:80px;
+        margin-bottom:10px;
+    }
+
+    .big-heart:before,
+    .big-heart:after{
+        width:80px;
+        height:80px;
+    }
+
+    .big-heart:before{
+        top:-40px;
+    }
+
+    .big-heart:after{
+        left:40px;
+    }
+
+    .photo-stack{
+        height:190px;
+    }
+
+    .photo-stack .polaroid{
+        width:135px;
+    }
+
+    .memory p{
+        font-size:18px;
+    }
+
+    .final-letter{
+        font-size:18px;
+    }
+}
+
+
+/* =========================================================
+   LOVE STORY APP — AUTH / DASHBOARD / EDITOR
+   ========================================================= */
+
+.hidden{display:none!important}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+
+#authScreen,#dashboardScreen,#editorScreen{
+    position:fixed;
+    inset:0;
+    z-index:100;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+    overflow:auto;
+}
+#authScreen{background:
+    radial-gradient(circle at 12% 10%,#fff 0,transparent 22%),
+    radial-gradient(circle at 90% 85%,#f8aebe 0,transparent 30%),
+    linear-gradient(135deg,#ffdfe7,#f8b8ca);
+}
+.auth-card,.dashboard-card,.editor-card{
+    width:min(470px,100%);
+    max-height:calc(100svh - 36px);
+    overflow:auto;
+    background:rgba(255,253,248,.94);
+    border:1px solid #fff;
+    border-radius:28px;
+    box-shadow:0 25px 70px rgba(101,43,61,.22);
+    padding:26px 20px 22px;
+    position:relative;
+}
+.auth-card:before,.dashboard-card:before,.editor-card:before{
+    content:"♡";
+    position:absolute;
+    top:8px;
+    left:50%;
+    transform:translateX(-50%);
+    color:#ed7898;
+    font-size:22px;
+}
+.app-kicker{
+    margin-top:10px;
+    text-align:center;
+    font:12px "DM Sans",sans-serif;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:#b76b7e;
+}
+.app-heading{
+    font:42px/1 "Pacifico",cursive;
+    color:#ed7898;
+    text-align:center;
+    margin:12px 0 8px;
+}
+.app-subtitle{
+    font:21px/1.15 "Caveat",cursive;
+    color:#815260;
+    text-align:center;
+    margin:0 0 18px;
+}
+.form-group{margin:11px 0}
+.form-label{
+    display:block;
+    margin:0 0 6px 5px;
+    font:13px "DM Sans",sans-serif;
+    color:#815260;
+}
+.form-input,.form-textarea{
+    width:100%;
+    border:1px solid #f1b6c5;
+    background:#fffaf7;
+    color:#5c3442;
+    border-radius:15px;
+    padding:12px 14px;
+    outline:none;
+    box-shadow:inset 0 1px 4px #7b405315;
+}
+.form-textarea{min-height:105px;resize:vertical}
+.form-input:focus,.form-textarea:focus{
+    border-color:#ed7898;
+    box-shadow:0 0 0 3px #ed789822;
+}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.primary-action,.secondary-action,.danger-action{
+    width:100%;
+    border:0;
+    border-radius:24px;
+    padding:11px 16px;
+    margin-top:10px;
+    transition:.2s;
+}
+.primary-action{
+    background:#ed7898;
+    color:#fff;
+    box-shadow:0 8px 20px #b9587333;
+}
+.secondary-action{
+    background:#fff;
+    color:#d85e7c;
+    border:1px solid #f0afc0;
+}
+.danger-action{
+    background:#fff0f2;
+    color:#b4435e;
+    border:1px solid #efb0bd;
+}
+.primary-action:hover,.secondary-action:hover,.danger-action:hover{
+    transform:translateY(-1px);
+}
+.mini-link{
+    border:0;background:none;color:#bd637c;
+    display:block;margin:12px auto 0;
+    text-decoration:underline;
+}
+.notice{
+    border-radius:14px;
+    padding:10px 12px;
+    margin:10px 0;
+    font:13px/1.4 "DM Sans",sans-serif;
+}
+.notice.error{background:#fff0f2;color:#a33d57}
+.notice.success{background:#eef9f1;color:#38704b}
+.notice.info{background:#fff5e9;color:#8b6330}
+.small-note{
+    font:12px/1.45 "DM Sans",sans-serif;
+    color:#99717d;
+    text-align:center;
+    margin:10px 0 0;
+}
+.dashboard-card{width:min(540px,100%)}
+.dashboard-welcome{
+    text-align:center;
+    font:26px "Caveat",cursive;
+    color:#704755;
+    margin:4px 0 18px;
+}
+.dashboard-actions{display:grid;gap:11px}
+.dashboard-btn{
+    border:1px solid #f1c2cd;
+    background:#fff;
+    border-radius:20px;
+    padding:16px 18px;
+    text-align:left;
+    color:#5c3442;
+    box-shadow:0 6px 18px #71384a10;
+}
+.dashboard-btn strong{display:block;font:25px "Caveat",cursive;color:#d2607d}
+.dashboard-btn span{display:block;font:12px "DM Sans",sans-serif;color:#9a6d79;margin-top:2px}
+.dashboard-footer{display:flex;gap:10px;margin-top:15px}
+.dashboard-footer button{flex:1}
+
+.editor-card{width:min(680px,100%)}
+.editor-header{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.editor-title{font:35px "Caveat",cursive;color:#d2607d;margin:8px 0}
+.close-btn{
+    border:0;background:#fff0f3;color:#bd637c;border-radius:50%;
+    width:38px;height:38px;font-size:20px;
+}
+.editor-list{display:grid;gap:9px;margin:12px 0 18px}
+.memory-row{
+    display:grid;
+    grid-template-columns:36px 1fr auto;
+    align-items:center;
+    gap:10px;
+    border:1px solid #f2c4cf;
+    background:#fff;
+    border-radius:17px;
+    padding:9px;
+}
+.memory-order{
+    width:30px;height:30px;border-radius:50%;
+    display:grid;place-items:center;
+    background:#ffe4eb;color:#c65c78;
+    font:14px "DM Sans",sans-serif;
+}
+.memory-thumb{
+    width:48px;height:48px;border-radius:10px;
+    object-fit:cover;background:#ffe8ed;
+}
+.memory-meta{min-width:0}
+.memory-meta strong{
+    display:block;font:22px "Caveat",cursive;color:#704755;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.memory-meta span{
+    display:block;font:11px "DM Sans",sans-serif;color:#a27782;
+}
+.row-actions{display:flex;gap:5px}
+.icon-btn{
+    border:0;background:#fff3f6;color:#bd637c;
+    width:34px;height:34px;border-radius:50%;
+}
+.story-empty{
+    text-align:center;padding:35px 15px;
+    font:24px "Caveat",cursive;color:#9a6d79;
+}
+.loading-heart{
+    font-size:42px;color:#ed7898;
+    animation:heartbeat 1.2s ease-in-out infinite;
+}
+#journeyScreen{
+    position:fixed;inset:0;z-index:80;
+    background:#f7cbd6;
+}
+#storyMount{width:100%;height:100%}
+.journey-toolbar{
+    position:fixed;top:10px;right:10px;z-index:95;
+    display:flex;gap:6px;
+}
+.journey-toolbar button{
+    border:0;background:#fff9;color:#b4516d;
+    backdrop-filter:blur(8px);
+    width:38px;height:38px;border-radius:50%;
+    box-shadow:0 5px 15px #71384a22;
+}
+#journeyApp .scene{display:flex}
+#journeyApp .scene:not(.active){display:none}
+.story-image-error{
+    display:grid;place-items:center;
+    min-height:130px;padding:15px;
+    background:#fff0f3;color:#a75a6d;
+    font:17px "Caveat",cursive;text-align:center;
+}
+@media(max-width:520px){
+    .form-grid{grid-template-columns:1fr}
+    .auth-card,.dashboard-card,.editor-card{padding:24px 15px 18px}
+    .app-heading{font-size:38px}
+}
+</style>
 </head>
+
+
+
 <body>
 
-    <canvas id="bg-canvas"></canvas>
-    <canvas id="main-canvas"></canvas>
+<!-- =========================================================
+     AUTHENTICATION
+     ========================================================= -->
+<section id="authScreen">
+    <div class="auth-card">
+        <div class="app-kicker">our little private world</div>
+        <h1 class="app-heading">Our Story ♡</h1>
+        <p class="app-subtitle">A tiny place for everything that belongs to us.</p>
 
-    <div class="ui-layer" id="startScreen">
-        <h1 class="title">Our Constellation</h1>
-        <div class="subtitle">Tap anywhere to begin</div>
-    </div>
+        <div id="authNotice" class="notice hidden"></div>
 
-    <div class="memory-box" id="memoryBox">
-        <div class="date" id="dateText"></div>
-        <div class="story" id="storyText"></div>
-        <div class="tap-hint">Tap screen to continue ⟶</div>
-    </div>
+        <div id="setupView">
+            <div class="small-title" style="text-align:center">First time here?</div>
+            <p class="app-subtitle">Create your account once. The password cannot be reset from this website.</p>
 
-    <div class="final-card" id="finalCard">
-        <div class="photo-frame">
-            <img src="https://raw.githubusercontent.com/Partha65/HeartBeatSync/refs/heads/main/file_000000003cbc71faade9b33fffcfd3ee.png" alt="Us">
+            <div class="form-group">
+                <label class="form-label">Mobile number</label>
+                <input id="setupMobile" class="form-input" type="tel" inputmode="numeric"
+                       maxlength="15" placeholder="Your mobile number">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Username</label>
+                <input id="setupUsername" class="form-input" autocomplete="username"
+                       maxlength="30" placeholder="Choose a username">
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input id="setupPassword" class="form-input" type="password"
+                           autocomplete="new-password" placeholder="Password">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirm password</label>
+                    <input id="setupPassword2" class="form-input" type="password"
+                           autocomplete="new-password" placeholder="Repeat password">
+                </div>
+            </div>
+
+            <button id="createAccountBtn" class="primary-action">Create our private space ♡</button>
+            <button id="showLoginBtn" class="mini-link">Already created an account? Login</button>
+
+            <p class="small-note">
+                Password setup is intentionally one-time. Keep it safe.
+            </p>
         </div>
-        <h2 style="font-family:'Cinzel'; margin-bottom:10px;">The Next Chapter</h2>
-        <p style="font-size: 0.9rem; color: #ddd; line-height: 1.5;">
-            From that first hello to where we are now, every moment has been a star in our sky.
-        </p>
-        <a href="https://example.com/gallery" target="_blank" class="btn-gallery">View Our Album</a>
+
+        <div id="loginView" class="hidden">
+            <div class="small-title" style="text-align:center">Welcome back</div>
+            <h2 class="title" style="font-size:42px">Enter our story</h2>
+
+            <div class="form-group">
+                <label class="form-label">Username</label>
+                <input id="loginUsername" class="form-input" autocomplete="username"
+                       placeholder="Your username">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input id="loginPassword" class="form-input" type="password"
+                       autocomplete="current-password" placeholder="Your password">
+            </div>
+
+            <button id="loginBtn" class="primary-action">Open our story ♡</button>
+            <button id="showSetupBtn" class="mini-link">First time? Create account</button>
+
+            <p class="small-note">
+                There is no password-reset button in this application.
+            </p>
+        </div>
     </div>
+</section>
 
-    <script>
-        const memories = [
-    { 
-        date: "Nov 26, 2023", 
-        text: "It all began with a simple 'Hello' in Instagram DM 💬💖", 
-        x: 15, y: 75 
-    },
-    { 
-        date: "December 2, 2023", 
-        text: "Our first meet & movie date 🎬🍿❤️", 
-        x: 35, y: 40 
-    },
-    { 
-        date: "December 21, 2023", 
-        text: "The day you proposed to me 💍🥰", 
-        x: 65, y: 60 
-    },
-    { 
-        date: "March 30, 2024", 
-        text: "I proposed to you with a rose in the cinema hall 🌹🎥💞", 
-        x: 50, y: 20 
-    },
-    { 
-        date: "November 26, 2024", 
-        text: "We celebrated our 1st anniversary together 🎉❤️✨", 
-        x: 85, y: 35 
+<!-- =========================================================
+     DASHBOARD
+     ========================================================= -->
+<section id="dashboardScreen" class="hidden">
+    <div class="dashboard-card">
+        <div class="app-kicker">private scrapbook</div>
+        <h1 class="app-heading">Our Little World ♡</h1>
+        <div id="dashboardWelcome" class="dashboard-welcome">Welcome</div>
+
+        <div class="dashboard-actions">
+            <button id="viewJourneyBtn" class="dashboard-btn">
+                <strong>📖 View our journey</strong>
+                <span>Open the animated scrapbook.</span>
+            </button>
+
+            <button id="addMemoryBtn" class="dashboard-btn">
+                <strong>💕 Add a memory</strong>
+                <span>Create a new page from an image URL and your story.</span>
+            </button>
+
+            <button id="editJourneyBtn" class="dashboard-btn">
+                <strong>✏️ Edit our journey</strong>
+                <span>Change, delete, or reorder existing memories.</span>
+            </button>
+        </div>
+
+        <div class="dashboard-footer">
+            <button id="logoutBtn" class="secondary-action">Logout</button>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================================
+     ADD / EDIT FORM
+     ========================================================= -->
+<section id="editorScreen" class="hidden">
+    <div class="editor-card">
+        <div class="editor-header">
+            <h2 id="editorHeading" class="editor-title">Add a memory ♡</h2>
+            <button id="editorCloseBtn" class="close-btn">×</button>
+        </div>
+
+        <div id="editorNotice" class="notice hidden"></div>
+
+        <form id="memoryForm">
+            <input id="memoryId" type="hidden">
+
+            <div class="form-group">
+                <label class="form-label">Memory title *</label>
+                <input id="memoryTitle" class="form-input" maxlength="120" required
+                       placeholder="The first little Hello">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Image URL *</label>
+                <input id="memoryImageUrl" class="form-input" type="url" required
+                       placeholder="https://.../photo.jpg">
+            </div>
+
+            <div id="imagePreviewWrap" class="hidden" style="margin:10px 0;text-align:center">
+                <img id="imagePreview" alt="Image preview"
+                     style="max-width:100%;max-height:220px;border-radius:16px;object-fit:cover;box-shadow:0 10px 25px #71384a22">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Image caption</label>
+                <input id="memoryCaption" class="form-input" maxlength="160"
+                       placeholder="It started here ♡">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Date of memory *</label>
+                <input id="memoryDate" class="form-input" type="date" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Memory description *</label>
+                <textarea id="memoryDescription" class="form-textarea" maxlength="3000" required
+                          placeholder="Write what happened and why this moment matters..."></textarea>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Button name</label>
+                    <input id="memoryButton" class="form-input" maxlength="100"
+                           placeholder="And then we met... ♡">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Page note</label>
+                    <input id="memoryPageNote" class="form-input" maxlength="80"
+                           placeholder="our beginning">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Page number</label>
+                <input id="memoryPageNumber" class="form-input" type="number" min="1"
+                       placeholder="Leave blank to use order">
+            </div>
+
+            <button id="saveMemoryBtn" class="primary-action" type="submit">Save memory ♡</button>
+        </form>
+    </div>
+</section>
+
+<!-- =========================================================
+     EDIT JOURNEY LIST
+     ========================================================= -->
+<section id="editListScreen" class="hidden">
+    <div class="editor-card">
+        <div class="editor-header">
+            <h2 class="editor-title">Edit our journey ♡</h2>
+            <button id="editListCloseBtn" class="close-btn">×</button>
+        </div>
+        <p class="small-note" style="text-align:left">
+            Use ↑ / ↓ to reorder pages. The order is saved to Firestore.
+        </p>
+        <div id="memoryList" class="editor-list"></div>
+        <button id="saveOrderBtn" class="primary-action">Save journey order ♡</button>
+    </div>
+</section>
+
+<!-- =========================================================
+     JOURNEY
+     ========================================================= -->
+<section id="journeyScreen" class="hidden">
+    <div class="journey-toolbar">
+        <button id="journeyHomeBtn" title="Back to dashboard">⌂</button>
+    </div>
+    <div id="storyMount"></div>
+</section>
+
+<script type="module">
+/* =========================================================
+   FIREBASE CONFIGURATION
+   ---------------------------------------------------------
+   Replace ONLY these public web-app values with your Firebase
+   project configuration.
+
+   NEVER put a Firebase service-account/private key here.
+   ========================================================= */
+
+import { initializeApp }
+    from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+
+import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut,
+    deleteUser
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+import {
+    getFirestore,
+    collection,
+    collectionGroup,
+    doc,
+    getDoc,
+    getDocs,
+    setDoc,
+    addDoc,
+    updateDoc,
+    deleteDoc,
+    query,
+    where,
+    orderBy,
+    limit,
+    serverTimestamp,
+    runTransaction
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+import {
+    initializeAppCheck,
+    ReCaptchaV3Provider
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app-check.js";
+
+/* =========================
+   PASTE YOUR FIREBASE CONFIG
+   ========================= */
+
+const firebaseConfig = {
+    apiKey: "PASTE_FIREBASE_API_KEY",
+    authDomain: "PASTE_PROJECT.firebaseapp.com",
+    projectId: "PASTE_PROJECT_ID",
+    storageBucket: "PASTE_PROJECT.firebasestorage.app",
+    messagingSenderId: "PASTE_MESSAGING_SENDER_ID",
+    appId: "PASTE_APP_ID"
+};
+
+/*
+ * After creating Firebase App Check, put your reCAPTCHA v3
+ * site key here. Leave empty during initial local setup.
+ */
+const APP_CHECK_SITE_KEY = "";
+
+/* =========================================================
+   APP INITIALIZATION
+   ========================================================= */
+
+const firebaseConfigured =
+    !firebaseConfig.apiKey.startsWith("PASTE_") &&
+    !firebaseConfig.projectId.startsWith("PASTE_");
+
+let app = null;
+let auth = null;
+let db = null;
+
+if (firebaseConfigured) {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+
+    if (APP_CHECK_SITE_KEY) {
+        try {
+            initializeAppCheck(app, {
+                provider: new ReCaptchaV3Provider(APP_CHECK_SITE_KEY),
+                isTokenAutoRefreshEnabled: true
+            });
+        } catch (err) {
+            console.warn("App Check initialization failed:", err);
+        }
     }
-];
+}
 
+/* =========================================================
+   DOM
+   ========================================================= */
 
-        /* --- SETUP --- */
-        const mainCanvas = document.getElementById('main-canvas');
-        const bgCanvas = document.getElementById('bg-canvas');
-        const ctx = mainCanvas.getContext('2d');
-        const bgCtx = bgCanvas.getContext('2d');
-        
-        const startScreen = document.getElementById('startScreen');
-        const memoryBox = document.getElementById('memoryBox');
-        const dateText = document.getElementById('dateText');
-        const storyText = document.getElementById('storyText');
-        const finalCard = document.getElementById('finalCard');
+const $ = id => document.getElementById(id);
 
-        let width, height;
-        let step = -1; 
-        let points = []; 
+const authScreen = $("authScreen");
+const dashboardScreen = $("dashboardScreen");
+const editorScreen = $("editorScreen");
+const editListScreen = $("editListScreen");
+const journeyScreen = $("journeyScreen");
 
-        function resize() {
-            width = window.innerWidth;
-            height = window.innerHeight;
-            mainCanvas.width = width;
-            mainCanvas.height = height;
-            bgCanvas.width = width;
-            bgCanvas.height = height;
-            
-            points = memories.map(m => ({
-                x: (m.x / 100) * width,
-                y: (m.y / 100) * height
-            }));
-            
-            drawBackground();
-            if(step >= 0) redrawCurrentState();
+let currentUser = null;
+let currentMemories = [];
+let editingMemoryId = null;
+
+/* =========================================================
+   UI HELPERS
+   ========================================================= */
+
+function showScreen(screen) {
+    [authScreen, dashboardScreen, editorScreen, editListScreen, journeyScreen]
+        .forEach(x => x.classList.add("hidden"));
+    screen.classList.remove("hidden");
+}
+
+function showNotice(element, message, type="info") {
+    element.textContent = message;
+    element.className = `notice ${type}`;
+}
+
+function clearNotice(element) {
+    element.textContent = "";
+    element.className = "notice hidden";
+}
+
+function normalizeUsername(value) {
+    return value.trim().toLowerCase().replace(/[^a-z0-9._-]/g, "");
+}
+
+function normalizeMobile(value) {
+    return value.replace(/\D/g, "");
+}
+
+/*
+ * Firebase Email/Password Auth needs an email identifier.
+ * We create a deterministic internal login email from the
+ * username. It is NOT presented as the user's real email.
+ *
+ * The user still logs in with:
+ *     username + password
+ */
+function authEmailFromUsername(username) {
+    return `${normalizeUsername(username)}@login.ourlovestory.app`;
+}
+
+function formatDate(dateString) {
+    if (!dateString) return "";
+    const d = new Date(`${dateString}T00:00:00`);
+    if (Number.isNaN(d.getTime())) return dateString;
+    return d.toLocaleDateString(undefined, {
+        month: "long",
+        day: "numeric",
+        year: "numeric"
+    }).toUpperCase();
+}
+
+function escapeHtml(value="") {
+    return String(value)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+}
+
+function isConfigured() {
+    if (!firebaseConfigured) {
+        showNotice($("authNotice"),
+            "Firebase is not configured yet. Add your Firebase web configuration in the code first.",
+            "error");
+        return false;
+    }
+    return true;
+}
+
+/* =========================================================
+   AUTH MODE SWITCH
+   ========================================================= */
+
+$("showLoginBtn").addEventListener("click", () => {
+    $("setupView").classList.add("hidden");
+    $("loginView").classList.remove("hidden");
+    clearNotice($("authNotice"));
+});
+
+$("showSetupBtn").addEventListener("click", () => {
+    $("loginView").classList.add("hidden");
+    $("setupView").classList.remove("hidden");
+    clearNotice($("authNotice"));
+});
+
+/* =========================================================
+   ONE-TIME ACCOUNT SETUP
+   ========================================================= */
+
+$("createAccountBtn").addEventListener("click", async () => {
+    if (!isConfigured()) return;
+
+    const mobile = normalizeMobile($("setupMobile").value);
+    const username = normalizeUsername($("setupUsername").value);
+    const password = $("setupPassword").value;
+    const password2 = $("setupPassword2").value;
+
+    if (mobile.length < 8) {
+        showNotice($("authNotice"), "Please enter a valid mobile number.", "error");
+        return;
+    }
+
+    if (username.length < 3) {
+        showNotice($("authNotice"),
+            "Username must contain at least 3 letters/numbers.",
+            "error");
+        return;
+    }
+
+    if (password.length < 8) {
+        showNotice($("authNotice"),
+            "Use a password with at least 8 characters.",
+            "error");
+        return;
+    }
+
+    if (password !== password2) {
+        showNotice($("authNotice"), "The passwords do not match.", "error");
+        return;
+    }
+
+    const btn = $("createAccountBtn");
+    btn.disabled = true;
+    btn.textContent = "Creating our private space...";
+
+    const authEmail = authEmailFromUsername(username);
+
+    try {
+        /*
+         * Check username uniqueness before creating Auth account.
+         * Security rules should allow read only for this exact
+         * username lookup collection.
+         */
+        const usernameRef = doc(db, "usernames", username);
+        const existingUsername = await getDoc(usernameRef);
+
+        if (existingUsername.exists()) {
+            throw new Error("That username is already taken.");
         }
-        window.addEventListener('resize', resize);
-        resize();
 
-        /* --- FIXED INTERACTION LOGIC --- */
-        let isProcessing = false; // Flag to prevent double taps
+        const credential =
+            await createUserWithEmailAndPassword(auth, authEmail, password);
 
-        function handleInput(e) {
-            // 1. If user clicked a Link (like the final button), let it happen.
-            if(e.target.tagName === 'A') return;
+        const uid = credential.user.uid;
 
-            // 2. If an animation is already processing, IGNORE the click.
-            if(isProcessing) return;
+        /*
+         * Store profile + username mapping.
+         *
+         * The password is NEVER stored here.
+         */
+        await runTransaction(db, async transaction => {
+            const freshUsername = await transaction.get(usernameRef);
 
-            // 3. Lock input for 1 second (1000ms) to prevent accidental double-skips
-            isProcessing = true;
-            setTimeout(() => { isProcessing = false; }, 1000);
-
-            nextStep();
-        }
-
-        // Listen for both, but the 'isProcessing' flag will stop the duplicate.
-        document.addEventListener('click', handleInput);
-        document.addEventListener('touchstart', handleInput, {passive: false});
-
-        function nextStep() {
-            if (step >= memories.length) return; 
-
-            step++;
-
-            if (step === 0) {
-                startScreen.classList.add('hidden');
-                drawStar(points[0].x, points[0].y);
-                showText(0);
-            } 
-            else if (step < memories.length) {
-                animateLine(points[step-1], points[step]);
-                showText(step);
-            } 
-            else {
-                finishJourney();
+            if (freshUsername.exists()) {
+                throw new Error("That username was just taken. Please choose another.");
             }
+
+            const userRef = doc(db, "users", uid);
+
+            transaction.set(userRef, {
+                uid,
+                username,
+                mobile,
+                passwordSetupCompleted: true,
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp()
+            });
+
+            transaction.set(usernameRef, {
+                uid,
+                username,
+                authEmail,
+                createdAt: serverTimestamp()
+            });
+        });
+
+        showNotice($("authNotice"),
+            "Account created successfully. Welcome to your private story ♡",
+            "success");
+
+        setTimeout(() => {
+            showDashboard();
+        }, 600);
+
+    } catch (error) {
+        console.error(error);
+
+        /*
+         * If account creation succeeded but Firestore setup failed,
+         * clean up the newly-created Auth user so we don't leave a
+         * half-created account.
+         */
+        if (auth.currentUser && !currentUser) {
+            try { await deleteUser(auth.currentUser); } catch (_) {}
         }
 
-        /* --- VISUALS --- */
-        function showText(index) {
-            memoryBox.classList.remove('active');
-            
-            setTimeout(() => {
-                dateText.innerText = memories[index].date;
-                storyText.innerText = memories[index].text;
-                memoryBox.classList.add('active');
-            }, 400); 
+        let message = error.message || "Unable to create the account.";
+
+        if (error.code === "auth/email-already-in-use") {
+            message = "This username is already registered.";
         }
 
-        function drawStar(x, y) {
-            ctx.beginPath();
-            ctx.arc(x, y, 4, 0, Math.PI * 2);
-            ctx.fillStyle = "#fff";
-            ctx.shadowBlur = 15;
-            ctx.shadowColor = "#ff9a9e";
-            ctx.fill();
-            
-            ctx.beginPath();
-            ctx.arc(x, y, 10, 0, Math.PI * 2);
-            ctx.strokeStyle = "rgba(255,255,255,0.3)";
-            ctx.stroke();
+        showNotice($("authNotice"), message, "error");
+    } finally {
+        btn.disabled = false;
+        btn.textContent = "Create our private space ♡";
+    }
+});
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
+$("loginBtn").addEventListener("click", async () => {
+    if (!isConfigured()) return;
+
+    const username = normalizeUsername($("loginUsername").value);
+    const password = $("loginPassword").value;
+
+    if (!username || !password) {
+        showNotice($("authNotice"),
+            "Enter your username and password.",
+            "error");
+        return;
+    }
+
+    const btn = $("loginBtn");
+    btn.disabled = true;
+    btn.textContent = "Opening our story...";
+
+    try {
+        const usernameRef = doc(db, "usernames", username);
+        const usernameSnap = await getDoc(usernameRef);
+
+        if (!usernameSnap.exists()) {
+            throw new Error("Incorrect username or password.");
         }
 
-        function animateLine(p1, p2) {
-            let progress = 0;
-            const speed = 0.03; 
+        const data = usernameSnap.data();
 
-            function draw() {
-                progress += speed;
-                if (progress > 1) progress = 1;
+        await signInWithEmailAndPassword(
+            auth,
+            data.authEmail,
+            password
+        );
 
-                const curX = p1.x + (p2.x - p1.x) * progress;
-                const curY = p1.y + (p2.y - p1.y) * progress;
+    } catch (error) {
+        console.error(error);
+        showNotice($("authNotice"),
+            "Incorrect username or password.",
+            "error");
+    } finally {
+        btn.disabled = false;
+        btn.textContent = "Open our story ♡";
+    }
+});
 
-                ctx.beginPath();
-                ctx.moveTo(p1.x, p1.y);
-                ctx.lineTo(curX, curY);
-                ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
-                ctx.lineWidth = 2;
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = "white";
-                ctx.stroke();
+/* =========================================================
+   AUTH STATE
+   ========================================================= */
 
-                if (progress < 1) {
-                    requestAnimationFrame(draw);
-                } else {
-                    drawStar(p2.x, p2.y);
+onAuthStateChanged(auth || { onAuthStateChanged: () => {} }, async user => {
+    if (!user) {
+        currentUser = null;
+        if (firebaseConfigured) showScreen(authScreen);
+        return;
+    }
+
+    currentUser = user;
+    await showDashboard();
+});
+
+async function showDashboard() {
+    if (!currentUser || !db) return;
+
+    const userSnap = await getDoc(doc(db, "users", currentUser.uid));
+
+    if (!userSnap.exists()) {
+        await signOut(auth);
+        showNotice($("authNotice"), "Account profile not found.", "error");
+        return;
+    }
+
+    const profile = userSnap.data();
+
+    if (!profile.passwordSetupCompleted) {
+        await signOut(auth);
+        showNotice($("authNotice"),
+            "This account has not completed one-time setup.",
+            "error");
+        return;
+    }
+
+    $("dashboardWelcome").textContent =
+        `Welcome, ${profile.username} ♡`;
+
+    showScreen(dashboardScreen);
+}
+
+/* =========================================================
+   LOGOUT
+   ========================================================= */
+
+$("logoutBtn").addEventListener("click", async () => {
+    await signOut(auth);
+    $("loginPassword").value = "";
+    showScreen(authScreen);
+});
+
+/* =========================================================
+   MEMORY FORM
+   ========================================================= */
+
+function resetMemoryForm() {
+    $("memoryForm").reset();
+    $("memoryId").value = "";
+    $("imagePreviewWrap").classList.add("hidden");
+    $("imagePreview").removeAttribute("src");
+    editingMemoryId = null;
+    $("editorHeading").textContent = "Add a memory ♡";
+    $("saveMemoryBtn").textContent = "Save memory ♡";
+    clearNotice($("editorNotice"));
+}
+
+$("addMemoryBtn").addEventListener("click", () => {
+    resetMemoryForm();
+    showScreen(editorScreen);
+});
+
+$("editorCloseBtn").addEventListener("click", () => {
+    showDashboard();
+});
+
+$("memoryImageUrl").addEventListener("input", () => {
+    const url = $("memoryImageUrl").value.trim();
+
+    if (!url) {
+        $("imagePreviewWrap").classList.add("hidden");
+        return;
+    }
+
+    $("imagePreview").onload = () => {
+        $("imagePreviewWrap").classList.remove("hidden");
+    };
+
+    $("imagePreview").onerror = () => {
+        $("imagePreviewWrap").classList.add("hidden");
+    };
+
+    $("imagePreview").src = url;
+});
+
+$("memoryForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    if (!currentUser || !db) return;
+
+    const title = $("memoryTitle").value.trim();
+    const imageUrl = $("memoryImageUrl").value.trim();
+    const caption = $("memoryCaption").value.trim();
+    const memoryDate = $("memoryDate").value;
+    const description = $("memoryDescription").value.trim();
+    const buttonText = $("memoryButton").value.trim() || "Next page ♡";
+    const pageNote = $("memoryPageNote").value.trim() || "our memory";
+    const pageNumberRaw = $("memoryPageNumber").value.trim();
+
+    if (!title || !imageUrl || !memoryDate || !description) {
+        showNotice($("editorNotice"),
+            "Please complete all required fields.",
+            "error");
+        return;
+    }
+
+    /*
+     * Browser-side image validation is helpful UX, but Firestore
+     * Security Rules are still the actual database protection.
+     */
+    try {
+        new URL(imageUrl);
+    } catch (_) {
+        showNotice($("editorNotice"), "Please enter a valid image URL.", "error");
+        return;
+    }
+
+    const btn = $("saveMemoryBtn");
+    btn.disabled = true;
+    btn.textContent = editingMemoryId ? "Saving changes..." : "Saving memory...";
+
+    try {
+        const memoriesRef = collection(db, "users", currentUser.uid, "memories");
+
+        if (editingMemoryId) {
+            const ref = doc(memoriesRef, editingMemoryId);
+
+            await updateDoc(ref, {
+                title,
+                imageUrl,
+                caption,
+                memoryDate,
+                description,
+                buttonText,
+                pageNote,
+                pageNumber: pageNumberRaw ? Number(pageNumberRaw) : null,
+                updatedAt: serverTimestamp()
+            });
+
+            showNotice($("editorNotice"), "Memory updated ♡", "success");
+
+        } else {
+            const existing = await getDocs(
+                query(memoriesRef, orderBy("order", "desc"), limit(1))
+            );
+
+            let nextOrder = 1;
+
+            if (!existing.empty) {
+                nextOrder = Number(existing.docs[0].data().order || 0) + 1;
+            }
+
+            await addDoc(memoriesRef, {
+                title,
+                imageUrl,
+                caption,
+                memoryDate,
+                description,
+                buttonText,
+                pageNote,
+                pageNumber: pageNumberRaw ? Number(pageNumberRaw) : nextOrder,
+                order: nextOrder,
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp()
+            });
+
+            showNotice($("editorNotice"), "New memory saved ♡", "success");
+        }
+
+        setTimeout(() => showDashboard(), 650);
+
+    } catch (error) {
+        console.error(error);
+        showNotice($("editorNotice"),
+            "Could not save the memory. Check Firebase configuration and rules.",
+            "error");
+    } finally {
+        btn.disabled = false;
+        btn.textContent = editingMemoryId ? "Save changes ♡" : "Save memory ♡";
+    }
+});
+
+/* =========================================================
+   EDIT JOURNEY
+   ========================================================= */
+
+$("editJourneyBtn").addEventListener("click", async () => {
+    await loadMemoryList();
+    showScreen(editListScreen);
+});
+
+$("editListCloseBtn").addEventListener("click", () => {
+    showDashboard();
+});
+
+async function loadMemories() {
+    if (!currentUser || !db) return [];
+
+    const ref = collection(db, "users", currentUser.uid, "memories");
+
+    const snapshot = await getDocs(
+        query(ref, orderBy("order", "asc"))
+    );
+
+    return snapshot.docs.map(snapshotDoc => ({
+        id: snapshotDoc.id,
+        ...snapshotDoc.data()
+    }));
+}
+
+async function loadMemoryList() {
+    const list = $("memoryList");
+    list.innerHTML = `
+        <div class="story-empty">
+            <div class="loading-heart">♥</div>
+            Loading our memories...
+        </div>`;
+
+    try {
+        currentMemories = await loadMemories();
+
+        if (!currentMemories.length) {
+            list.innerHTML = `
+                <div class="story-empty">
+                    No memories yet ♡<br>
+                    Add the first page of your story.
+                </div>`;
+            return;
+        }
+
+        renderMemoryList();
+
+    } catch (error) {
+        console.error(error);
+        list.innerHTML = `
+            <div class="notice error">
+                Unable to load memories. Check Firestore rules.
+            </div>`;
+    }
+}
+
+function renderMemoryList() {
+    const list = $("memoryList");
+
+    list.innerHTML = currentMemories.map((memory, index) => `
+        <div class="memory-row" data-id="${escapeHtml(memory.id)}">
+            <div class="memory-order">${index + 1}</div>
+
+            <img class="memory-thumb"
+                 src="${escapeHtml(memory.imageUrl || "")}"
+                 alt=""
+                 onerror="this.style.opacity='.25'">
+
+            <div class="memory-meta">
+                <strong>${escapeHtml(memory.title || "Untitled memory")}</strong>
+                <span>${escapeHtml(formatDate(memory.memoryDate))}</span>
+            </div>
+
+            <div class="row-actions">
+                <button class="icon-btn move-up" title="Move up">↑</button>
+                <button class="icon-btn move-down" title="Move down">↓</button>
+                <button class="icon-btn edit-memory" title="Edit">✎</button>
+                <button class="icon-btn delete-memory" title="Delete">×</button>
+            </div>
+        </div>
+    `).join("");
+
+    list.querySelectorAll(".move-up").forEach((button, index) => {
+        button.addEventListener("click", () => {
+            if (index === 0) return;
+            [currentMemories[index - 1], currentMemories[index]] =
+                [currentMemories[index], currentMemories[index - 1]];
+            renderMemoryList();
+        });
+    });
+
+    list.querySelectorAll(".move-down").forEach((button, index) => {
+        button.addEventListener("click", () => {
+            if (index >= currentMemories.length - 1) return;
+            [currentMemories[index + 1], currentMemories[index]] =
+                [currentMemories[index], currentMemories[index + 1]];
+            renderMemoryList();
+        });
+    });
+
+    list.querySelectorAll(".edit-memory").forEach(button => {
+        button.addEventListener("click", () => {
+            const row = button.closest(".memory-row");
+            const memory = currentMemories.find(x => x.id === row.dataset.id);
+            openMemoryEditor(memory);
+        });
+    });
+
+    list.querySelectorAll(".delete-memory").forEach(button => {
+        button.addEventListener("click", async () => {
+            const row = button.closest(".memory-row");
+            const memory = currentMemories.find(x => x.id === row.dataset.id);
+
+            if (!memory) return;
+
+            const confirmed = confirm(
+                `Delete "${memory.title}"?\n\nThis cannot be undone.`
+            );
+
+            if (!confirmed) return;
+
+            try {
+                await deleteDoc(
+                    doc(db, "users", currentUser.uid, "memories", memory.id)
+                );
+
+                currentMemories =
+                    currentMemories.filter(x => x.id !== memory.id);
+
+                renderMemoryList();
+
+            } catch (error) {
+                console.error(error);
+                alert("Unable to delete this memory.");
+            }
+        });
+    });
+}
+
+function openMemoryEditor(memory) {
+    editingMemoryId = memory.id;
+
+    $("memoryId").value = memory.id;
+    $("memoryTitle").value = memory.title || "";
+    $("memoryImageUrl").value = memory.imageUrl || "";
+    $("memoryCaption").value = memory.caption || "";
+    $("memoryDate").value = memory.memoryDate || "";
+    $("memoryDescription").value = memory.description || "";
+    $("memoryButton").value = memory.buttonText || "";
+    $("memoryPageNote").value = memory.pageNote || "";
+    $("memoryPageNumber").value =
+        memory.pageNumber ?? "";
+
+    $("editorHeading").textContent = "Edit a memory ♡";
+    $("saveMemoryBtn").textContent = "Save changes ♡";
+
+    if (memory.imageUrl) {
+        $("imagePreview").src = memory.imageUrl;
+        $("imagePreviewWrap").classList.remove("hidden");
+    }
+
+    showScreen(editorScreen);
+}
+
+$("saveOrderBtn").addEventListener("click", async () => {
+    if (!currentUser || !db) return;
+
+    const btn = $("saveOrderBtn");
+    btn.disabled = true;
+    btn.textContent = "Saving order...";
+
+    try {
+        /*
+         * Each memory gets a stable sequential order.
+         */
+        for (let i = 0; i < currentMemories.length; i++) {
+            await updateDoc(
+                doc(db, "users", currentUser.uid, "memories", currentMemories[i].id),
+                {
+                    order: i + 1,
+                    updatedAt: serverTimestamp()
                 }
-            }
-            draw();
+            );
         }
 
-        function redrawCurrentState() {
-            ctx.clearRect(0,0,width,height);
-            if(step >= 0 && step < memories.length) {
-                for(let i=0; i<=step; i++) {
-                    drawStar(points[i].x, points[i].y);
-                    if(i > 0) {
-                        ctx.beginPath();
-                        ctx.moveTo(points[i-1].x, points[i-1].y);
-                        ctx.lineTo(points[i].x, points[i].y);
-                        ctx.stroke();
+        showDashboard();
+
+    } catch (error) {
+        console.error(error);
+        alert("Unable to save the journey order.");
+    } finally {
+        btn.disabled = false;
+        btn.textContent = "Save journey order ♡";
+    }
+});
+
+/* =========================================================
+   VIEW JOURNEY
+   ========================================================= */
+
+$("viewJourneyBtn").addEventListener("click", async () => {
+    showScreen(journeyScreen);
+    await renderJourney();
+});
+
+$("journeyHomeBtn").addEventListener("click", () => {
+    showDashboard();
+    $("storyMount").innerHTML = "";
+});
+
+async function renderJourney() {
+    const mount = $("storyMount");
+
+    mount.innerHTML = `
+        <div style="height:100%;display:grid;place-items:center">
+            <div style="text-align:center">
+                <div class="loading-heart">♥</div>
+                <div style="font:24px Caveat;color:#704755">Opening our story...</div>
+            </div>
+        </div>`;
+
+    try {
+        const memories = await loadMemories();
+
+        if (!memories.length) {
+            mount.innerHTML = `
+                <div style="height:100%;display:grid;place-items:center;padding:25px">
+                    <div class="paper" style="max-width:430px;text-align:center">
+                        <div class="big-heart"></div>
+                        <h1 class="big-script">Our story is waiting...</h1>
+                        <div class="hand">
+                            Add your first memory and this page will become
+                            your little journey. ♡
+                        </div>
+                    </div>
+                </div>`;
+            return;
+        }
+
+        mount.innerHTML = buildJourneyHtml(memories);
+
+        initStoryEngine();
+
+    } catch (error) {
+        console.error(error);
+        mount.innerHTML = `
+            <div style="height:100%;display:grid;place-items:center;padding:20px">
+                <div class="paper" style="max-width:430px;text-align:center">
+                    <h2 class="title">Something went wrong ♡</h2>
+                    <div class="memory">
+                        <p>We couldn't load the journey.</p>
+                        <p>Please check your Firebase Firestore rules.</p>
+                    </div>
+                </div>
+            </div>`;
+    }
+}
+
+function descriptionToParagraphs(description) {
+    return String(description || "")
+        .split(/\n+/)
+        .map(x => x.trim())
+        .filter(Boolean)
+        .map(x => `<p>${escapeHtml(x)}</p>`)
+        .join("");
+}
+
+function buildJourneyHtml(memories) {
+    const pages = memories.map((memory, index) => {
+        const pageNumber =
+            memory.pageNumber || (index + 1);
+
+        return `
+        <section class="scene ${index === 0 ? "active" : ""}">
+            <div class="content">
+                <div class="paper">
+
+                    <div class="tape"></div>
+
+                    <div class="small-title">
+                        ${escapeHtml(memory.pageNote || `Chapter ${String(index + 1).padStart(2,"0")}`)}
+                    </div>
+
+                    <h2 class="title">
+                        ${escapeHtml(memory.title || "A little memory")}
+                    </h2>
+
+                    <div class="polaroid">
+                        <img
+                            src="${escapeHtml(memory.imageUrl || "")}"
+                            alt="${escapeHtml(memory.caption || memory.title || "Memory")}"
+                            onerror="this.parentElement.innerHTML='<div class=&quot;story-image-error&quot;>This image URL could not be loaded ♡</div>'">
+                        <div class="polaroid-note">
+                            ${escapeHtml(memory.caption || "us ♡")}
+                        </div>
+                    </div>
+
+                    <div class="date">
+                        ${escapeHtml(formatDate(memory.memoryDate))}
+                    </div>
+
+                    <div class="memory">
+                        ${descriptionToParagraphs(memory.description)}
+                    </div>
+
+                    ${
+                        index < memories.length - 1
+                        ? `<button class="love-button next">
+                               <span>${escapeHtml(memory.buttonText || "And then... ♡")}</span>
+                           </button>`
+                        : `<button class="love-button finish-story">
+                               <span>${escapeHtml(memory.buttonText || "The next page... ♡")}</span>
+                           </button>`
                     }
-                }
-            }
-        }
 
-        function drawBackground() {
-            bgCtx.clearRect(0,0,width,height);
-            bgCtx.fillStyle = 'white';
-            for(let i=0; i<150; i++) {
-                const x = Math.random() * width;
-                const y = Math.random() * height;
-                const s = Math.random() * 1.5;
-                bgCtx.globalAlpha = Math.random() * 0.5 + 0.1;
-                bgCtx.beginPath();
-                bgCtx.arc(x, y, s, 0, Math.PI*2);
-                bgCtx.fill();
-            }
-        }
+                    <div class="page-number">
+                        ${escapeHtml(String(pageNumber).padStart(2,"0"))}
+                        · ${escapeHtml(memory.pageNote || "our story")}
+                    </div>
 
-        function finishJourney() {
-            memoryBox.classList.remove('active');
-            
-            mainCanvas.style.transition = "opacity 2s";
-            mainCanvas.style.opacity = "0.3";
-            
-            setTimeout(() => {
-                finalCard.classList.add('show');
-            }, 500);
+                </div>
+            </div>
+        </section>`;
+    }).join("");
+
+    return `
+        <div class="app" id="journeyApp">
+            <div class="doodle d1">♡</div>
+            <div class="doodle d2">✦</div>
+            <div class="doodle d3">♡</div>
+            <div class="doodle d4">♥</div>
+            <main id="dynamicStory">${pages}</main>
+        </div>`;
+}
+
+/* =========================================================
+   DYNAMIC STORY ENGINE
+   ========================================================= */
+
+function initStoryEngine() {
+    const journeyApp = $("journeyApp");
+    const scenes = [...journeyApp.querySelectorAll(".scene")];
+
+    let currentPage = 0;
+    let touchStartX = 0;
+
+    function createPetal() {
+        const petal = document.createElement("div");
+
+        petal.className = "petal";
+        petal.textContent =
+            ["♡","♥","✿","❀"][Math.floor(Math.random() * 4)];
+
+        petal.style.left = Math.random() * 100 + "%";
+        petal.style.fontSize = (13 + Math.random() * 14) + "px";
+        petal.style.animationDuration = (5 + Math.random() * 5) + "s";
+        petal.style.animationDelay = Math.random() * 2 + "s";
+
+        journeyApp.appendChild(petal);
+
+        setTimeout(() => petal.remove(), 10000);
+    }
+
+    function createPetalBurst() {
+        for (let i = 0; i < 15; i++) {
+            setTimeout(createPetal, i * 55);
         }
-    </script>
+    }
+
+    function showPage(page) {
+        currentPage = Math.max(0, Math.min(page, scenes.length - 1));
+
+        scenes.forEach((scene, index) => {
+            scene.classList.toggle("active", index === currentPage);
+        });
+
+        createPetalBurst();
+    }
+
+    journeyApp.querySelectorAll(".next").forEach(button => {
+        button.addEventListener("click", () => showPage(currentPage + 1));
+    });
+
+    journeyApp.querySelectorAll(".finish-story").forEach(button => {
+        button.addEventListener("click", () => {
+            createPetalBurst();
+            setTimeout(() => showPage(0), 350);
+        });
+    });
+
+    journeyApp.addEventListener("touchstart", event => {
+        touchStartX = event.changedTouches[0].screenX;
+    }, {passive:true});
+
+    journeyApp.addEventListener("touchend", event => {
+        const difference =
+            touchStartX - event.changedTouches[0].screenX;
+
+        if (Math.abs(difference) > 60) {
+            showPage(currentPage + (difference > 0 ? 1 : -1));
+        }
+    }, {passive:true});
+
+    setInterval(createPetal, 900);
+    createPetalBurst();
+}
+
+/* =========================================================
+   STARTUP
+   ========================================================= */
+
+if (!firebaseConfigured) {
+    $("setupView").classList.remove("hidden");
+    $("loginView").classList.add("hidden");
+    showNotice(
+        $("authNotice"),
+        "Add your Firebase web configuration to activate this private story.",
+        "info"
+    );
+} else {
+    showScreen(authScreen);
+}
+</script>
+
 </body>
+
 </html>
