@@ -597,6 +597,37 @@ body{
 
 
 /* =========================================================
+   DYNAMIC MULTI-PHOTO MEMORY LAYOUT
+========================================================= */
+.memory-photo-stack{width:100%;height:218px;position:relative;display:flex;justify-content:center;align-items:center;margin:2px 0 8px}
+.memory-photo-stack .polaroid{position:absolute;width:150px;padding:7px 7px 24px;margin:0}
+.memory-photo-stack .polaroid img{height:145px;width:100%;object-fit:cover}
+.memory-photo-stack .polaroid:nth-child(1){left:14%;transform:rotate(-8deg) translateY(7px);z-index:1}
+.memory-photo-stack .polaroid:nth-child(2){right:14%;transform:rotate(7deg) translateY(-5px);z-index:2}
+.memory-photo-stack .polaroid:nth-child(3){left:50%;top:5px;transform:translateX(-50%) rotate(1deg);z-index:3}
+.memory-photo-stack .polaroid:nth-child(n+4){display:none}
+.memory-photo-stack .polaroid-note{font-size:18px;bottom:2px}
+.memory-photo-grid{width:100%;height:205px;display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:3px 0 8px;padding:2px 5px}
+.memory-photo-grid .mini-polaroid{background:#fff;padding:5px 5px 18px;border-radius:2px;box-shadow:0 8px 16px #6c344433;transform:rotate(-2deg);position:relative;min-width:0}
+.memory-photo-grid .mini-polaroid:nth-child(even){transform:rotate(2deg)}
+.memory-photo-grid .mini-polaroid:nth-child(3){transform:rotate(1deg)}
+.memory-photo-grid .mini-polaroid:nth-child(4){transform:rotate(-3deg)}
+.memory-photo-grid .mini-polaroid img{width:100%;height:145px;display:block;object-fit:cover;border-radius:1px}
+.memory-photo-grid .mini-polaroid div{position:absolute;left:4px;right:4px;bottom:1px;text-align:center;font:16px "Caveat",cursive;color:#573540;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* =========================================================
+   AUTH / REQUEST LOADING
+========================================================= */
+.processing-overlay{position:fixed;inset:0;z-index:500;display:none;place-items:center;padding:20px;background:rgba(70,30,45,.28);backdrop-filter:blur(5px)}
+.processing-overlay.active{display:grid}
+.processing-card{width:min(310px,90vw);text-align:center;background:#fffdf8;border:1px solid #fff;border-radius:26px;padding:24px 20px 20px;box-shadow:0 25px 70px #5b2b3d44}
+.processing-heart{font-size:48px;color:#ed7898;line-height:1;animation:heartbeat 1.05s ease-in-out infinite}
+.processing-spinner{width:26px;height:26px;margin:10px auto 7px;border:3px solid #f5cbd6;border-top-color:#ed7898;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.processing-title{font:27px "Caveat",cursive;color:#704755}
+.processing-text{font:12px/1.4 "DM Sans",sans-serif;color:#a06f7e;margin-top:3px}
+
+/* =========================================================
    MEMORY TEXT
 ========================================================= */
 
@@ -1356,23 +1387,233 @@ button{cursor:pointer}
 }
 #journeyApp .scene{display:flex}
 #journeyApp .scene:not(.active){display:none}
-.story-image-error{
-    display:grid;place-items:center;
-    min-height:130px;padding:15px;
-    background:#fff0f3;color:#a75a6d;
-    font:17px "Caveat",cursive;text-align:center;
+
+/* =========================================================
+   MULTI IMAGE MEMORY EDITOR
+   ========================================================= */
+.image-url-list{display:grid;gap:8px}
+.image-url-row{display:grid;grid-template-columns:1fr 38px;gap:7px;align-items:center}
+.image-remove-btn{border:0;background:#fff0f3;color:#bd637c;width:38px;height:38px;border-radius:50%;font-size:18px}
+.add-image-btn{border:1px dashed #e7a6b8;background:#fff8fa;color:#bd637c;border-radius:16px;padding:9px 12px;margin-top:8px;width:100%}
+.image-preview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.image-preview-grid img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;background:#ffe8ed;box-shadow:0 5px 12px #71384a18}
+.image-count-note{font:11px "DM Sans",sans-serif;color:#a27782;margin-top:5px}
+
+/* =========================================================
+   TIMELINE — ELEGANT ROMANTIC JOURNEY MAP
+   ========================================================= */
+#timelineScreen{
+    position:fixed;inset:0;z-index:85;overflow:auto;
+    padding:20px 14px 34px;
+    background:
+      radial-gradient(circle at 8% 8%,rgba(255,255,255,.95),transparent 25%),
+      radial-gradient(circle at 90% 80%,rgba(236,151,180,.42),transparent 35%),
+      linear-gradient(145deg,#fff5f7 0%,#ffe4ec 48%,#f7bfd1 100%);
 }
-@media(max-width:520px){
-    .form-grid{grid-template-columns:1fr}
-    .auth-card,.dashboard-card,.editor-card{padding:24px 15px 18px}
-    .app-heading{font-size:38px}
+.timeline-shell{
+    width:min(920px,100%);margin:0 auto;padding:6px 0 20px;
 }
+.timeline-top{
+    text-align:center;padding:8px 12px 24px;
+}
+.timeline-kicker{
+    font:11px "DM Sans";letter-spacing:.28em;text-transform:uppercase;
+    color:#b77a8d;
+}
+.timeline-title{
+    font:48px/1 "Pacifico",cursive;color:#d86688;margin:9px 0 10px;
+    text-shadow:0 2px 0 rgba(255,255,255,.8);
+}
+.timeline-subtitle{
+    font:22px/1.2 "Caveat",cursive;color:#765260;
+    max-width:560px;margin:0 auto;
+}
+.timeline-board{
+    position:relative;
+    width:100%;
+    min-height:660px;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.95);
+    border-radius:34px;
+    background:
+      radial-gradient(circle at 14% 22%,rgba(234,194,202,.20) 0 2px,transparent 3px),
+      radial-gradient(circle at 84% 76%,rgba(234,194,202,.22) 0 2px,transparent 3px),
+      linear-gradient(135deg,#fffdf8,#fffaf4);
+    box-shadow:
+      0 24px 55px rgba(117,57,78,.13),
+      inset 0 0 0 7px rgba(255,255,255,.62);
+}
+.timeline-board::before{
+    content:"";position:absolute;inset:20px;border:1px dashed rgba(215,141,161,.18);
+    border-radius:26px;pointer-events:none;
+}
+.timeline-map-label{
+    position:absolute;top:24px;left:50%;transform:translateX(-50%);
+    z-index:3;white-space:nowrap;
+    font:12px "DM Sans";letter-spacing:.2em;text-transform:uppercase;
+    color:#b17b89;background:#fffaf7e8;padding:8px 18px;border-radius:999px;
+    box-shadow:0 5px 18px rgba(117,57,78,.08);
+}
+.timeline-road-svg{
+    position:absolute;inset:70px 28px 55px;width:calc(100% - 56px);height:calc(100% - 125px);
+    overflow:visible;pointer-events:none;
+}
+.timeline-road-shadow{
+    fill:none;stroke:rgba(104,65,74,.12);stroke-width:64;
+    stroke-linecap:round;stroke-linejoin:round;transform:translateY(7px);
+}
+.timeline-road-base{
+    fill:none;stroke:#c9a9a8;stroke-width:58;
+    stroke-linecap:round;stroke-linejoin:round;
+}
+.timeline-road{
+    fill:none;stroke:#2f9c99;stroke-width:48;
+    stroke-linecap:round;stroke-linejoin:round;
+}
+.timeline-road-highlight{
+    fill:none;stroke:#49b4ae;stroke-width:3;
+    stroke-linecap:round;stroke-linejoin:round;
+    stroke-dasharray:11 13;
+}
+.timeline-stop{
+    position:absolute;z-index:4;
+    width:142px;transform:translate(-50%,-50%);
+    text-align:center;
+}
+.timeline-stop:nth-child(1){left:11%;top:25%}
+.timeline-stop:nth-child(2){left:31%;top:25%}
+.timeline-stop:nth-child(3){left:50%;top:25%}
+.timeline-stop:nth-child(4){left:70%;top:25%}
+.timeline-stop:nth-child(5){left:89%;top:25%}
+.timeline-stop:nth-child(6){left:89%;top:50%}
+.timeline-stop:nth-child(7){left:70%;top:50%}
+.timeline-stop:nth-child(8){left:50%;top:50%}
+.timeline-stop:nth-child(9){left:30%;top:50%}
+.timeline-stop:nth-child(10){left:11%;top:50%}
+.timeline-stop:nth-child(11){left:11%;top:75%}
+.timeline-stop:nth-child(12){left:31%;top:75%}
+.timeline-stop:nth-child(13){left:50%;top:75%}
+.timeline-stop:nth-child(14){left:70%;top:75%}
+.timeline-stop:nth-child(15){left:89%;top:75%}
+
+.timeline-node{
+    width:58px;height:58px;margin:0 auto;border-radius:50%;
+    border:5px solid #fff;
+    background:linear-gradient(145deg,#f58fab,#d95f82);
+    color:#fff;display:grid;place-items:center;
+    font:25px "Caveat";cursor:pointer;
+    box-shadow:0 8px 20px rgba(190,84,113,.30),0 0 0 7px rgba(255,239,244,.88);
+    transition:transform .22s ease,box-shadow .22s ease;
+}
+.timeline-node:hover{transform:scale(1.09)}
+.timeline-stop.is-open .timeline-node{
+    transform:scale(1.1);
+    box-shadow:0 10px 25px rgba(190,84,113,.36),0 0 0 9px rgba(245,201,213,.92);
+}
+.timeline-mini{
+    margin-top:10px;padding:7px 10px;border-radius:14px;
+    background:rgba(255,253,249,.94);
+    box-shadow:0 5px 16px rgba(117,57,78,.09);
+    border:1px solid rgba(255,255,255,.95);
+}
+.timeline-card-title{
+    font:22px/1.05 "Caveat";color:#704755;margin:0;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.timeline-card-date{
+    font:9px "DM Sans";letter-spacing:.02em;color:#b77b89;margin-top:4px;
+}
+.timeline-card{
+    display:none;
+    position:absolute;
+    left:50%;top:78px;transform:translateX(-50%);
+    width:min(285px,72vw);
+    text-align:left;
+    background:#fffdf9;
+    border:1px solid #fff;
+    border-radius:22px;padding:15px;
+    box-shadow:0 18px 40px rgba(91,45,62,.18);
+    animation:timelineReveal .28s ease both;
+}
+.timeline-stop.is-open .timeline-card{display:block}
+.timeline-card::before{
+    content:"";position:absolute;top:-8px;left:50%;
+    width:16px;height:16px;background:#fffdf9;transform:translateX(-50%) rotate(45deg);
+}
+.timeline-close-inline{
+    position:absolute;right:9px;top:9px;width:30px;height:30px;
+    border:0;border-radius:50%;background:#fff0f4;color:#bd637c;font-size:18px;
+}
+.timeline-detail-images{
+    display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:7px;margin:10px 0;
+}
+.timeline-detail-images img{
+    width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;background:#ffe8ed;
+}
+.timeline-detail-inline{
+    border-top:1px dashed #efc1cd;padding-top:9px;margin-top:9px;
+}
+.timeline-detail-text{font:19px/1.15 "Caveat";color:#704755}
+.timeline-detail-text p{margin:5px 0}
+.timeline-detail-caption{font:16px "Caveat";color:#c45d79;margin-top:7px}
+.timeline-end{
+    position:absolute;right:6%;bottom:20px;
+    font:24px "Caveat";color:#c96d86;
+    background:#fffaf7d9;padding:7px 12px;border-radius:14px;
+}
+.timeline-empty{text-align:center;padding:100px 20px}
+.timeline-empty .big-heart{margin:0 auto 20px}
+@keyframes timelineReveal{
+    from{opacity:0;transform:translate(-50%,-6px) scale(.97)}
+    to{opacity:1;transform:translate(-50%,0) scale(1)}
+}
+@media(max-width:720px){
+    #timelineScreen{padding:12px 9px 26px}
+    .timeline-title{font-size:40px}
+    .timeline-subtitle{font-size:20px}
+    .timeline-board{min-height:600px;border-radius:28px}
+    .timeline-road-svg{inset:74px 16px 52px;width:calc(100% - 32px);height:calc(100% - 126px)}
+    .timeline-road-shadow{stroke-width:58}
+    .timeline-road-base{stroke-width:52}
+    .timeline-road{stroke-width:43}
+    .timeline-stop{width:112px}
+    .timeline-node{width:50px;height:50px;font-size:22px}
+    .timeline-mini{margin-top:7px;padding:6px 7px}
+    .timeline-card-title{font-size:19px}
+    .timeline-card-date{font-size:8px}
+    .timeline-card{top:68px;width:min(275px,78vw);padding:13px}
+    .timeline-end{font-size:20px;right:5%;bottom:16px}
+}
+@media(max-width:430px){
+    .timeline-title{font-size:35px}
+    .timeline-board{min-height:560px}
+    .timeline-stop{width:94px}
+    .timeline-node{width:45px;height:45px;border-width:4px}
+    .timeline-mini{border-radius:11px;padding:5px 5px}
+    .timeline-card-title{font-size:17px}
+    .timeline-card-date{font-size:7px}
+    .timeline-card{top:61px;width:min(255px,82vw)}
+    .timeline-road-shadow{stroke-width:52}
+    .timeline-road-base{stroke-width:47}
+    .timeline-road{stroke-width:39}
+}
+
 </style>
 </head>
 
 
 
 <body>
+
+<div id="processingOverlay" class="processing-overlay" aria-live="polite" aria-busy="false">
+    <div class="processing-card">
+        <div class="processing-heart">♥</div>
+        <div class="processing-spinner"></div>
+        <div id="processingTitle" class="processing-title">Just a moment ♡</div>
+        <div id="processingText" class="processing-text">Your request is being processed...</div>
+    </div>
+</div>
 
 <!-- =========================================================
      AUTHENTICATION
@@ -1390,15 +1631,9 @@ button{cursor:pointer}
             <p class="app-subtitle">Create your account once. The password cannot be reset from this website.</p>
 
             <div class="form-group">
-                <label class="form-label">Mobile number</label>
-                <input id="setupMobile" class="form-input" type="tel" inputmode="numeric"
-                       maxlength="15" placeholder="Your mobile number">
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Username</label>
-                <input id="setupUsername" class="form-input" autocomplete="username"
-                       maxlength="30" placeholder="Choose a username">
+                <label class="form-label">Email address</label>
+                <input id="setupEmail" class="form-input" type="email" autocomplete="email"
+                       maxlength="160" placeholder="you@example.com">
             </div>
 
             <div class="form-grid">
@@ -1427,9 +1662,9 @@ button{cursor:pointer}
             <h2 class="title" style="font-size:42px">Enter our story</h2>
 
             <div class="form-group">
-                <label class="form-label">Username</label>
-                <input id="loginUsername" class="form-input" autocomplete="username"
-                       placeholder="Your username">
+                <label class="form-label">Email address</label>
+                <input id="loginEmail" class="form-input" type="email" autocomplete="email"
+                       placeholder="you@example.com">
             </div>
 
             <div class="form-group">
@@ -1472,6 +1707,11 @@ button{cursor:pointer}
                 <strong>✏️ Edit our journey</strong>
                 <span>Change, delete, or reorder existing memories.</span>
             </button>
+
+            <button id="timelineBtn" class="dashboard-btn">
+                <strong>🛤️ View our journey in time</strong>
+                <span>Walk through every milestone and open its little story.</span>
+            </button>
         </div>
 
         <div class="dashboard-footer">
@@ -1502,14 +1742,11 @@ button{cursor:pointer}
             </div>
 
             <div class="form-group">
-                <label class="form-label">Image URL *</label>
-                <input id="memoryImageUrl" class="form-input" type="url" required
-                       placeholder="https://.../photo.jpg">
-            </div>
-
-            <div id="imagePreviewWrap" class="hidden" style="margin:10px 0;text-align:center">
-                <img id="imagePreview" alt="Image preview"
-                     style="max-width:100%;max-height:220px;border-radius:16px;object-fit:cover;box-shadow:0 10px 25px #71384a22">
+                <label class="form-label">Photo URLs *</label>
+                <div id="imageUrlList" class="image-url-list"></div>
+                <button id="addImageBtn" class="add-image-btn" type="button">＋ Add another photo</button>
+                <div class="image-count-note">Add up to 5 direct image URLs. Only the URLs are stored in Firebase.</div>
+                <div id="imagePreviewGrid" class="image-preview-grid"></div>
             </div>
 
             <div class="form-group">
@@ -1581,6 +1818,13 @@ button{cursor:pointer}
     <div id="storyMount"></div>
 </section>
 
+<section id="timelineScreen" class="hidden">
+    <div class="journey-toolbar">
+        <button id="timelineHomeBtn" title="Back to dashboard">⌂</button>
+    </div>
+    <div id="timelineMount"></div>
+</section>
+
 <script type="module">
 /* =========================================================
    FIREBASE CONFIGURATION
@@ -1606,7 +1850,6 @@ import {
 import {
     getFirestore,
     collection,
-    collectionGroup,
     doc,
     getDoc,
     getDocs,
@@ -1618,8 +1861,7 @@ import {
     where,
     orderBy,
     limit,
-    serverTimestamp,
-    runTransaction
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
 import {
@@ -1687,6 +1929,7 @@ const dashboardScreen = $("dashboardScreen");
 const editorScreen = $("editorScreen");
 const editListScreen = $("editListScreen");
 const journeyScreen = $("journeyScreen");
+const timelineScreen = $("timelineScreen");
 
 let currentUser = null;
 let currentMemories = [];
@@ -1697,7 +1940,7 @@ let editingMemoryId = null;
    ========================================================= */
 
 function showScreen(screen) {
-    [authScreen, dashboardScreen, editorScreen, editListScreen, journeyScreen]
+    [authScreen, dashboardScreen, editorScreen, editListScreen, journeyScreen, timelineScreen]
         .forEach(x => x.classList.add("hidden"));
     screen.classList.remove("hidden");
 }
@@ -1712,24 +1955,12 @@ function clearNotice(element) {
     element.className = "notice hidden";
 }
 
-function normalizeUsername(value) {
-    return value.trim().toLowerCase().replace(/[^a-z0-9._-]/g, "");
+function normalizeEmail(value) {
+    return value.trim().toLowerCase();
 }
 
-function normalizeMobile(value) {
-    return value.replace(/\D/g, "");
-}
-
-/*
- * Firebase Email/Password Auth needs an email identifier.
- * We create a deterministic internal login email from the
- * username. It is NOT presented as the user's real email.
- *
- * The user still logs in with:
- *     username + password
- */
-function authEmailFromUsername(username) {
-    return `${normalizeUsername(username)}@login.ourlovestory.app`;
+function isValidEmail(value) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
 function formatDate(dateString) {
@@ -1762,6 +1993,15 @@ function isConfigured() {
     return true;
 }
 
+function setProcessing(active, title = "Just a moment ♡", text = "Your request is being processed...") {
+    const overlay = $("processingOverlay");
+    if (!overlay) return;
+    overlay.classList.toggle("active", active);
+    overlay.setAttribute("aria-busy", active ? "true" : "false");
+    $("processingTitle").textContent = title;
+    $("processingText").textContent = text;
+}
+
 /* =========================================================
    AUTH MODE SWITCH
    ========================================================= */
@@ -1782,30 +2022,22 @@ $("showSetupBtn").addEventListener("click", () => {
    ONE-TIME ACCOUNT SETUP
    ========================================================= */
 
+let registrationInProgress = false;
+
 $("createAccountBtn").addEventListener("click", async () => {
     if (!isConfigured()) return;
 
-    const mobile = normalizeMobile($("setupMobile").value);
-    const username = normalizeUsername($("setupUsername").value);
+    const email = normalizeEmail($("setupEmail").value);
     const password = $("setupPassword").value;
     const password2 = $("setupPassword2").value;
 
-    if (mobile.length < 8) {
-        showNotice($("authNotice"), "Please enter a valid mobile number.", "error");
-        return;
-    }
-
-    if (username.length < 3) {
-        showNotice($("authNotice"),
-            "Username must contain at least 3 letters/numbers.",
-            "error");
+    if (!isValidEmail(email)) {
+        showNotice($("authNotice"), "Please enter a valid email address.", "error");
         return;
     }
 
     if (password.length < 8) {
-        showNotice($("authNotice"),
-            "Use a password with at least 8 characters.",
-            "error");
+        showNotice($("authNotice"), "Use a password with at least 8 characters.", "error");
         return;
     }
 
@@ -1817,85 +2049,59 @@ $("createAccountBtn").addEventListener("click", async () => {
     const btn = $("createAccountBtn");
     btn.disabled = true;
     btn.textContent = "Creating our private space...";
-
-    const authEmail = authEmailFromUsername(username);
+    registrationInProgress = true;
+    setProcessing(true, "Creating our private space ♡", "Connecting to Firebase and saving your profile...");
 
     try {
-        /*
-         * Check username uniqueness before creating Auth account.
-         * Security rules should allow read only for this exact
-         * username lookup collection.
-         */
-        const usernameRef = doc(db, "usernames", username);
-        const existingUsername = await getDoc(usernameRef);
-
-        if (existingUsername.exists()) {
-            throw new Error("That username is already taken.");
-        }
-
-        const credential =
-            await createUserWithEmailAndPassword(auth, authEmail, password);
-
+        const credential = await createUserWithEmailAndPassword(auth, email, password);
         const uid = credential.user.uid;
 
         /*
-         * Store profile + username mapping.
-         *
-         * The password is NEVER stored here.
+         * onAuthStateChanged can fire immediately after Auth creation.
+         * registrationInProgress prevents it from checking the profile
+         * before this Firestore document has been written.
          */
-        await runTransaction(db, async transaction => {
-            const freshUsername = await transaction.get(usernameRef);
-
-            if (freshUsername.exists()) {
-                throw new Error("That username was just taken. Please choose another.");
-            }
-
-            const userRef = doc(db, "users", uid);
-
-            transaction.set(userRef, {
-                uid,
-                username,
-                mobile,
-                passwordSetupCompleted: true,
-                createdAt: serverTimestamp(),
-                updatedAt: serverTimestamp()
-            });
-
-            transaction.set(usernameRef, {
-                uid,
-                username,
-                authEmail,
-                createdAt: serverTimestamp()
-            });
+        await setDoc(doc(db, "users", uid), {
+            uid,
+            email,
+            passwordSetupCompleted: true,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
         });
 
-        showNotice($("authNotice"),
-            "Account created successfully. Welcome to your private story ♡",
-            "success");
+        registrationInProgress = false;
 
-        setTimeout(() => {
-            showDashboard();
-        }, 600);
+        showNotice(
+            $("authNotice"),
+            "Account created successfully ♡ Opening your private story...",
+            "success"
+        );
+
+        setTimeout(async () => {
+            try {
+                await showDashboard();
+                setProcessing(false);
+            } catch (error) {
+                console.error(error);
+                setProcessing(false);
+                showNotice($("authNotice"), "Account created, but the dashboard could not be opened. Please login again.", "error");
+            }
+        }, 900);
 
     } catch (error) {
         console.error(error);
-
-        /*
-         * If account creation succeeded but Firestore setup failed,
-         * clean up the newly-created Auth user so we don't leave a
-         * half-created account.
-         */
-        if (auth.currentUser && !currentUser) {
-            try { await deleteUser(auth.currentUser); } catch (_) {}
-        }
-
-        let message = error.message || "Unable to create the account.";
+        registrationInProgress = false;
+        setProcessing(false);
 
         if (error.code === "auth/email-already-in-use") {
-            message = "This username is already registered.";
+            showNotice($("authNotice"), "This email is already registered. Please login instead.", "error");
+        } else if (error.code === "auth/invalid-email") {
+            showNotice($("authNotice"), "Please enter a valid email address.", "error");
+        } else if (error.code === "permission-denied") {
+            showNotice($("authNotice"), "Account was created, but Firebase denied the profile write. Please publish the Firestore rules and login again.", "error");
+        } else {
+            showNotice($("authNotice"), error.message || "Unable to create the account.", "error");
         }
-
-        showNotice($("authNotice"), message, "error");
     } finally {
         btn.disabled = false;
         btn.textContent = "Create our private space ♡";
@@ -1909,41 +2115,25 @@ $("createAccountBtn").addEventListener("click", async () => {
 $("loginBtn").addEventListener("click", async () => {
     if (!isConfigured()) return;
 
-    const username = normalizeUsername($("loginUsername").value);
+    const email = normalizeEmail($("loginEmail").value);
     const password = $("loginPassword").value;
 
-    if (!username || !password) {
-        showNotice($("authNotice"),
-            "Enter your username and password.",
-            "error");
+    if (!isValidEmail(email) || !password) {
+        showNotice($("authNotice"), "Enter your email and password.", "error");
         return;
     }
 
     const btn = $("loginBtn");
     btn.disabled = true;
     btn.textContent = "Opening our story...";
+    setProcessing(true, "Opening our story ♡", "Checking your email and password...");
 
     try {
-        const usernameRef = doc(db, "usernames", username);
-        const usernameSnap = await getDoc(usernameRef);
-
-        if (!usernameSnap.exists()) {
-            throw new Error("Incorrect username or password.");
-        }
-
-        const data = usernameSnap.data();
-
-        await signInWithEmailAndPassword(
-            auth,
-            data.authEmail,
-            password
-        );
-
+        await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
         console.error(error);
-        showNotice($("authNotice"),
-            "Incorrect username or password.",
-            "error");
+        setProcessing(false);
+        showNotice($("authNotice"), "Incorrect email or password.", "error");
     } finally {
         btn.disabled = false;
         btn.textContent = "Open our story ♡";
@@ -1962,7 +2152,20 @@ onAuthStateChanged(auth || { onAuthStateChanged: () => {} }, async user => {
     }
 
     currentUser = user;
-    await showDashboard();
+
+    // Registration is still writing the profile. Do not show the
+    // dashboard until that write has completed successfully.
+    if (registrationInProgress) return;
+
+    try {
+        await showDashboard();
+        setProcessing(false);
+    } catch (error) {
+        console.error(error);
+        setProcessing(false);
+        await signOut(auth);
+        showNotice($("authNotice"), "We couldn't load your profile. Please login again.", "error");
+    }
 });
 
 async function showDashboard() {
@@ -1971,23 +2174,17 @@ async function showDashboard() {
     const userSnap = await getDoc(doc(db, "users", currentUser.uid));
 
     if (!userSnap.exists()) {
-        await signOut(auth);
-        showNotice($("authNotice"), "Account profile not found.", "error");
-        return;
+        throw new Error("Account profile not found.");
     }
 
     const profile = userSnap.data();
 
     if (!profile.passwordSetupCompleted) {
-        await signOut(auth);
-        showNotice($("authNotice"),
-            "This account has not completed one-time setup.",
-            "error");
-        return;
+        throw new Error("This account has not completed one-time setup.");
     }
 
     $("dashboardWelcome").textContent =
-        `Welcome, ${profile.username} ♡`;
+        `Welcome, ${profile.email || currentUser.email || "our love story"} ♡`;
 
     showScreen(dashboardScreen);
 }
@@ -1999,6 +2196,7 @@ async function showDashboard() {
 $("logoutBtn").addEventListener("click", async () => {
     await signOut(auth);
     $("loginPassword").value = "";
+    $("loginEmail").value = "";
     showScreen(authScreen);
 });
 
@@ -2006,11 +2204,70 @@ $("logoutBtn").addEventListener("click", async () => {
    MEMORY FORM
    ========================================================= */
 
+function createImageUrlRow(value = "") {
+    const wrap = $("imageUrlList");
+    if (wrap.children.length >= 5) return;
+
+    const row = document.createElement("div");
+    row.className = "image-url-row";
+
+    const input = document.createElement("input");
+    input.className = "form-input memory-image-url";
+    input.type = "url";
+    input.placeholder = "https://.../photo.jpg";
+    input.value = value;
+
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "image-remove-btn";
+    remove.textContent = "×";
+    remove.title = "Remove photo";
+    remove.addEventListener("click", () => {
+        row.remove();
+        if (!wrap.children.length) createImageUrlRow();
+        refreshImagePreviews();
+        updateAddImageButton();
+    });
+
+    input.addEventListener("input", refreshImagePreviews);
+    row.append(input, remove);
+    wrap.appendChild(row);
+    updateAddImageButton();
+}
+
+function getImageUrlsFromForm() {
+    return [...document.querySelectorAll(".memory-image-url")]
+        .map(input => input.value.trim())
+        .filter(Boolean);
+}
+
+function refreshImagePreviews() {
+    const grid = $("imagePreviewGrid");
+    grid.innerHTML = "";
+
+    getImageUrlsFromForm().forEach(url => {
+        const img = document.createElement("img");
+        img.src = url;
+        img.alt = "Preview";
+        img.onerror = () => img.remove();
+        grid.appendChild(img);
+    });
+}
+
+function updateAddImageButton() {
+    const count = $("imageUrlList").children.length;
+    $("addImageBtn").disabled = count >= 5;
+    $("addImageBtn").textContent = count >= 5
+        ? "Maximum 5 photos added"
+        : "＋ Add another photo";
+}
+
 function resetMemoryForm() {
     $("memoryForm").reset();
     $("memoryId").value = "";
-    $("imagePreviewWrap").classList.add("hidden");
-    $("imagePreview").removeAttribute("src");
+    $("imageUrlList").innerHTML = "";
+    $("imagePreviewGrid").innerHTML = "";
+    createImageUrlRow();
     editingMemoryId = null;
     $("editorHeading").textContent = "Add a memory ♡";
     $("saveMemoryBtn").textContent = "Save memory ♡";
@@ -2022,27 +2279,12 @@ $("addMemoryBtn").addEventListener("click", () => {
     showScreen(editorScreen);
 });
 
-$("editorCloseBtn").addEventListener("click", () => {
-    showDashboard();
+$("addImageBtn").addEventListener("click", () => {
+    createImageUrlRow();
 });
 
-$("memoryImageUrl").addEventListener("input", () => {
-    const url = $("memoryImageUrl").value.trim();
-
-    if (!url) {
-        $("imagePreviewWrap").classList.add("hidden");
-        return;
-    }
-
-    $("imagePreview").onload = () => {
-        $("imagePreviewWrap").classList.remove("hidden");
-    };
-
-    $("imagePreview").onerror = () => {
-        $("imagePreviewWrap").classList.add("hidden");
-    };
-
-    $("imagePreview").src = url;
+$("editorCloseBtn").addEventListener("click", () => {
+    showDashboard();
 });
 
 $("memoryForm").addEventListener("submit", async event => {
@@ -2051,7 +2293,7 @@ $("memoryForm").addEventListener("submit", async event => {
     if (!currentUser || !db) return;
 
     const title = $("memoryTitle").value.trim();
-    const imageUrl = $("memoryImageUrl").value.trim();
+    const imageUrls = getImageUrlsFromForm();
     const caption = $("memoryCaption").value.trim();
     const memoryDate = $("memoryDate").value;
     const description = $("memoryDescription").value.trim();
@@ -2059,21 +2301,20 @@ $("memoryForm").addEventListener("submit", async event => {
     const pageNote = $("memoryPageNote").value.trim() || "our memory";
     const pageNumberRaw = $("memoryPageNumber").value.trim();
 
-    if (!title || !imageUrl || !memoryDate || !description) {
-        showNotice($("editorNotice"),
-            "Please complete all required fields.",
-            "error");
+    if (!title || !imageUrls.length || !memoryDate || !description) {
+        showNotice($("editorNotice"), "Please add the title, at least one photo URL, date and description.", "error");
         return;
     }
 
-    /*
-     * Browser-side image validation is helpful UX, but Firestore
-     * Security Rules are still the actual database protection.
-     */
+    if (imageUrls.length > 5) {
+        showNotice($("editorNotice"), "You can add up to 5 photo URLs per memory.", "error");
+        return;
+    }
+
     try {
-        new URL(imageUrl);
+        imageUrls.forEach(url => new URL(url));
     } catch (_) {
-        showNotice($("editorNotice"), "Please enter a valid image URL.", "error");
+        showNotice($("editorNotice"), "One of the photo URLs is not valid.", "error");
         return;
     }
 
@@ -2083,6 +2324,7 @@ $("memoryForm").addEventListener("submit", async event => {
 
     try {
         const memoriesRef = collection(db, "users", currentUser.uid, "memories");
+        const imageUrl = imageUrls[0];
 
         if (editingMemoryId) {
             const ref = doc(memoriesRef, editingMemoryId);
@@ -2090,6 +2332,7 @@ $("memoryForm").addEventListener("submit", async event => {
             await updateDoc(ref, {
                 title,
                 imageUrl,
+                imageUrls,
                 caption,
                 memoryDate,
                 description,
@@ -2100,14 +2343,12 @@ $("memoryForm").addEventListener("submit", async event => {
             });
 
             showNotice($("editorNotice"), "Memory updated ♡", "success");
-
         } else {
             const existing = await getDocs(
                 query(memoriesRef, orderBy("order", "desc"), limit(1))
             );
 
             let nextOrder = 1;
-
             if (!existing.empty) {
                 nextOrder = Number(existing.docs[0].data().order || 0) + 1;
             }
@@ -2115,6 +2356,7 @@ $("memoryForm").addEventListener("submit", async event => {
             await addDoc(memoriesRef, {
                 title,
                 imageUrl,
+                imageUrls,
                 caption,
                 memoryDate,
                 description,
@@ -2129,12 +2371,12 @@ $("memoryForm").addEventListener("submit", async event => {
             showNotice($("editorNotice"), "New memory saved ♡", "success");
         }
 
-        setTimeout(() => showDashboard(), 650);
+        setTimeout(() => showDashboard(), 700);
 
     } catch (error) {
         console.error(error);
         showNotice($("editorNotice"),
-            "Could not save the memory. Check Firebase configuration and rules.",
+            error.message || "Could not save the memory. Please check Firebase rules.",
             "error");
     } finally {
         btn.disabled = false;
@@ -2289,7 +2531,13 @@ function openMemoryEditor(memory) {
 
     $("memoryId").value = memory.id;
     $("memoryTitle").value = memory.title || "";
-    $("memoryImageUrl").value = memory.imageUrl || "";
+    $("imageUrlList").innerHTML = "";
+    const urls = Array.isArray(memory.imageUrls) && memory.imageUrls.length
+        ? memory.imageUrls
+        : (memory.imageUrl ? [memory.imageUrl] : []);
+    (urls.length ? urls : [""]).slice(0, 5).forEach(url => createImageUrlRow(url));
+    $("imagePreviewGrid").innerHTML = "";
+    refreshImagePreviews();
     $("memoryCaption").value = memory.caption || "";
     $("memoryDate").value = memory.memoryDate || "";
     $("memoryDescription").value = memory.description || "";
@@ -2301,10 +2549,6 @@ function openMemoryEditor(memory) {
     $("editorHeading").textContent = "Edit a memory ♡";
     $("saveMemoryBtn").textContent = "Save changes ♡";
 
-    if (memory.imageUrl) {
-        $("imagePreview").src = memory.imageUrl;
-        $("imagePreviewWrap").classList.remove("hidden");
-    }
 
     showScreen(editorScreen);
 }
@@ -2355,6 +2599,16 @@ $("journeyHomeBtn").addEventListener("click", () => {
     $("storyMount").innerHTML = "";
 });
 
+$("timelineBtn").addEventListener("click", async () => {
+    showScreen($("timelineScreen"));
+    await renderTimeline();
+});
+
+$("timelineHomeBtn").addEventListener("click", () => {
+    showDashboard();
+    $("timelineMount").innerHTML = "";
+});
+
 async function renderJourney() {
     const mount = $("storyMount");
 
@@ -2368,26 +2622,8 @@ async function renderJourney() {
 
     try {
         const memories = await loadMemories();
-
-        if (!memories.length) {
-            mount.innerHTML = `
-                <div style="height:100%;display:grid;place-items:center;padding:25px">
-                    <div class="paper" style="max-width:430px;text-align:center">
-                        <div class="big-heart"></div>
-                        <h1 class="big-script">Our story is waiting...</h1>
-                        <div class="hand">
-                            Add your first memory and this page will become
-                            your little journey. ♡
-                        </div>
-                    </div>
-                </div>`;
-            return;
-        }
-
         mount.innerHTML = buildJourneyHtml(memories);
-
         initStoryEngine();
-
     } catch (error) {
         console.error(error);
         mount.innerHTML = `
@@ -2396,7 +2632,7 @@ async function renderJourney() {
                     <h2 class="title">Something went wrong ♡</h2>
                     <div class="memory">
                         <p>We couldn't load the journey.</p>
-                        <p>Please check your Firebase Firestore rules.</p>
+                        <p>${escapeHtml(error.message || "Please check Firebase Firestore rules.")}</p>
                     </div>
                 </div>
             </div>`;
@@ -2412,72 +2648,155 @@ function descriptionToParagraphs(description) {
         .join("");
 }
 
-function buildJourneyHtml(memories) {
-    const pages = memories.map((memory, index) => {
-        const pageNumber =
-            memory.pageNumber || (index + 1);
+function normalizeMemoryImages(memory) {
+    if (Array.isArray(memory.imageUrls) && memory.imageUrls.length) {
+        return memory.imageUrls.filter(Boolean).slice(0, 5);
+    }
+    return memory.imageUrl ? [memory.imageUrl] : [];
+}
 
+function memoryImagesHtml(memory, extraClass = "") {
+    const urls = normalizeMemoryImages(memory);
+    if (!urls.length) return `<div class="story-image-error">No photo was added to this memory ♡</div>`;
+
+    if (urls.length === 1) {
+        return `<div class="polaroid"><img src="${escapeHtml(urls[0])}" alt="${escapeHtml(memory.caption || memory.title || "Memory")}" onerror="this.parentElement.innerHTML='<div class=&quot;story-image-error&quot;>This image URL could not be loaded ♡</div>'"><div class="polaroid-note">${escapeHtml(memory.caption || "us ♡")}</div></div>`;
+    }
+
+    if (urls.length <= 3) {
+        return `<div class="memory-photo-stack ${extraClass}">${urls.map((url,i)=>`<div class="polaroid"><img src="${escapeHtml(url)}" alt="${escapeHtml(memory.caption || memory.title || "Memory")} ${i+1}" onerror="this.parentElement.innerHTML='<div class=&quot;story-image-error&quot;>Photo unavailable ♡</div>'"><div class="polaroid-note">${escapeHtml(memory.caption || `memory ${i+1} ♡`)}</div></div>`).join("")}</div>`;
+    }
+
+    return `<div class="memory-photo-grid ${extraClass}">${urls.slice(0,5).map((url,i)=>`<div class="mini-polaroid"><img src="${escapeHtml(url)}" alt="${escapeHtml(memory.caption || memory.title || "Memory")} ${i+1}" onerror="this.style.opacity='.2'"><div>${escapeHtml(memory.caption || `memory ${i+1} ♡`)}</div></div>`).join("")}</div>`;
+}
+
+function buildPhotoWall(memories) {
+    const urls = memories.flatMap(normalizeMemoryImages).slice(0, 5);
+    if (!urls.length) {
+        return `<div class="photo-wall-empty">Our scrapbook is waiting for its first little photograph ♡</div>`;
+    }
+    return `<div class="photo-wall">
+        ${urls.map(url => `<img src="${escapeHtml(url)}" alt="our memory" onerror="this.style.opacity='.18'">`).join("")}
+    </div>`;
+}
+
+function buildJourneyHtml(memories) {
+    const memoryPages = memories.map((memory, index) => {
+        const pageNumber = memory.pageNumber || (index + 2);
         return `
-        <section class="scene ${index === 0 ? "active" : ""}">
+        <section class="scene">
             <div class="content">
                 <div class="paper">
-
                     <div class="tape"></div>
-
                     <div class="small-title">
                         ${escapeHtml(memory.pageNote || `Chapter ${String(index + 1).padStart(2,"0")}`)}
                     </div>
-
-                    <h2 class="title">
-                        ${escapeHtml(memory.title || "A little memory")}
-                    </h2>
-
-                    <div class="polaroid">
-                        <img
-                            src="${escapeHtml(memory.imageUrl || "")}"
-                            alt="${escapeHtml(memory.caption || memory.title || "Memory")}"
-                            onerror="this.parentElement.innerHTML='<div class=&quot;story-image-error&quot;>This image URL could not be loaded ♡</div>'">
-                        <div class="polaroid-note">
-                            ${escapeHtml(memory.caption || "us ♡")}
-                        </div>
-                    </div>
-
-                    <div class="date">
-                        ${escapeHtml(formatDate(memory.memoryDate))}
-                    </div>
-
-                    <div class="memory">
-                        ${descriptionToParagraphs(memory.description)}
-                    </div>
-
-                    ${
-                        index < memories.length - 1
-                        ? `<button class="love-button next">
-                               <span>${escapeHtml(memory.buttonText || "And then... ♡")}</span>
-                           </button>`
-                        : `<button class="love-button finish-story">
-                               <span>${escapeHtml(memory.buttonText || "The next page... ♡")}</span>
-                           </button>`
-                    }
-
-                    <div class="page-number">
-                        ${escapeHtml(String(pageNumber).padStart(2,"0"))}
-                        · ${escapeHtml(memory.pageNote || "our story")}
-                    </div>
-
+                    <h2 class="title">${escapeHtml(memory.title || "A little memory")}</h2>
+                    ${memoryImagesHtml(memory)}
+                    <div class="date">${escapeHtml(formatDate(memory.memoryDate))}</div>
+                    <div class="memory">${descriptionToParagraphs(memory.description)}</div>
+                    <button class="love-button next">
+                        <span>${escapeHtml(memory.buttonText || "And then... ♡")}</span>
+                    </button>
+                    <div class="page-number">${escapeHtml(String(pageNumber).padStart(2,"0"))} · ${escapeHtml(memory.pageNote || "our story")}</div>
                 </div>
             </div>
         </section>`;
     }).join("");
 
     return `
-        <div class="app" id="journeyApp">
-            <div class="doodle d1">♡</div>
-            <div class="doodle d2">✦</div>
-            <div class="doodle d3">♡</div>
-            <div class="doodle d4">♥</div>
-            <main id="dynamicStory">${pages}</main>
-        </div>`;
+    <div class="app" id="journeyApp">
+        <div class="doodle d1">♡</div><div class="doodle d2">✦</div>
+        <div class="doodle d3">♡</div><div class="doodle d4">♥</div>
+        <main id="dynamicStory">
+
+            <!-- FIXED OPENING PAGE — preserved from the original story -->
+            <section class="scene active">
+                <div class="content"><div class="paper">
+                    <div class="tape"></div>
+                    <div class="small-title">Our little story</div>
+                    <div class="big-heart"></div>
+                    <h1 class="big-script">Our Story</h1>
+                    <div class="hand">It all started with one tiny <strong>Hello...</strong></div>
+                    <div class="date">November 26, 2023</div>
+                    <button class="love-button next"><span>Open our story ♡</span></button>
+                    <div class="page-number">01 · ∞</div>
+                </div></div>
+            </section>
+
+            ${memoryPages}
+
+            <!-- FIXED SCRAPBOOK PAGE -->
+            <section class="scene">
+                <div class="content"><div class="paper">
+                    <div class="small-title">Our little scrapbook</div>
+                    <h2 class="title">Tiny moments.<br>Big memories.</h2>
+                    ${buildPhotoWall(memories)}
+                    <div class="hand">If I could keep only one thing...<br>I'd keep these moments with you. ♡</div>
+                    <button class="love-button next"><span>I saved one more thing for you...</span></button>
+                    <div class="page-number">${String(memories.length + 2).padStart(2,"0")} · memories</div>
+                </div></div>
+            </section>
+
+            <!-- FIXED ENVELOPE PAGE -->
+            <section class="scene">
+                <div class="content"><div class="paper">
+                    <div class="small-title">A little something</div>
+                    <h2 class="title">I wrote this<br>just for you</h2>
+                    <div class="envelope" id="storyEnvelope">
+                        <div class="envelope-body"></div>
+                        <div class="envelope-flap"></div>
+                        <div class="seal">♥</div>
+                    </div>
+                    <div class="hand">There's a letter inside...</div>
+                    <button class="love-button open-letter"><span>Open it ♡</span></button>
+                    <div class="page-number">${String(memories.length + 3).padStart(2,"0")} · something from my heart</div>
+                </div></div>
+            </section>
+
+            <!-- FIXED FINAL LETTER PAGE — restored from the original story -->
+            <section class="scene">
+                <div class="content"><div class="paper">
+                    <div class="small-title">From my heart</div>
+                    <h2 class="title">My love...</h2>
+                    <div class="final-letter">
+                        <p>Our story didn't begin with some grand movie scene.</p>
+                        <p>It began with one tiny <strong>Hello.</strong></p>
+                        <p>And somehow, that little Hello became my favorite person, my favorite memories, my favorite smile, and my favorite part of every day.</p>
+                        <p>We've already filled so many pages together.</p>
+                        <p>But there are still so many pages waiting for us.</p>
+                        <p>More trips. More movies. More silly fights. More hugs. More photographs. More ordinary days that somehow become special because we're together.</p>
+                        <p>If I could go back to November 26, 2023...</p>
+                        <p>knowing everything I know today, I'd still open that message.</p>
+                        <p>I'd still say Hello.</p>
+                        <p>I'd still choose you.</p>
+                        <p>And tomorrow, I'd choose you again.</p>
+                        <div class="signature">Forever yours ♡</div>
+                    </div>
+                    <button class="love-button next"><span>One last thing...</span></button>
+                    <div class="page-number">${String(memories.length + 4).padStart(2,"0")} · forever</div>
+                </div></div>
+            </section>
+
+            <!-- FIXED FINAL SURPRISE PAGE -->
+            <section class="scene">
+                <div class="content"><div class="paper">
+                    <div class="small-title">Our story</div>
+                    <div class="big-heart"></div>
+                    <h1 class="big-script">To be continued...</h1>
+                    <div class="memory">
+                        <p>This isn't the end.</p>
+                        <p>It's just the last page we've written so far.</p>
+                        <p>There are still <strong>thousands of little moments</strong> waiting for us.</p>
+                    </div>
+                    <div class="big-script" style="font-size:42px;margin-top:5px;">You &amp; Me</div>
+                    <div class="hand" style="margin-top:10px;">From one little Hello...<br>to wherever forever takes us. ♡</div>
+                    <button class="love-button restart-story"><span>Read it again ♡</span></button>
+                    <div class="page-number">∞ · always</div>
+                </div></div>
+            </section>
+        </main>
+    </div>`;
 }
 
 /* =========================================================
@@ -2487,40 +2806,27 @@ function buildJourneyHtml(memories) {
 function initStoryEngine() {
     const journeyApp = $("journeyApp");
     const scenes = [...journeyApp.querySelectorAll(".scene")];
-
     let currentPage = 0;
     let touchStartX = 0;
 
     function createPetal() {
         const petal = document.createElement("div");
-
         petal.className = "petal";
-        petal.textContent =
-            ["♡","♥","✿","❀"][Math.floor(Math.random() * 4)];
-
+        petal.textContent = ["♡","♥","✿","❀"][Math.floor(Math.random() * 4)];
         petal.style.left = Math.random() * 100 + "%";
         petal.style.fontSize = (13 + Math.random() * 14) + "px";
         petal.style.animationDuration = (5 + Math.random() * 5) + "s";
-        petal.style.animationDelay = Math.random() * 2 + "s";
-
         journeyApp.appendChild(petal);
-
         setTimeout(() => petal.remove(), 10000);
     }
 
     function createPetalBurst() {
-        for (let i = 0; i < 15; i++) {
-            setTimeout(createPetal, i * 55);
-        }
+        for (let i = 0; i < 15; i++) setTimeout(createPetal, i * 55);
     }
 
     function showPage(page) {
         currentPage = Math.max(0, Math.min(page, scenes.length - 1));
-
-        scenes.forEach((scene, index) => {
-            scene.classList.toggle("active", index === currentPage);
-        });
-
+        scenes.forEach((scene, index) => scene.classList.toggle("active", index === currentPage));
         createPetalBurst();
     }
 
@@ -2528,10 +2834,22 @@ function initStoryEngine() {
         button.addEventListener("click", () => showPage(currentPage + 1));
     });
 
-    journeyApp.querySelectorAll(".finish-story").forEach(button => {
+    const envelope = $("storyEnvelope");
+    if (envelope) {
+        envelope.addEventListener("click", () => envelope.classList.toggle("open"));
+    }
+
+    journeyApp.querySelectorAll(".open-letter").forEach(button => {
+        button.addEventListener("click", () => {
+            if (envelope) envelope.classList.add("open");
+            setTimeout(() => showPage(currentPage + 1), 450);
+        });
+    });
+
+    journeyApp.querySelectorAll(".restart-story").forEach(button => {
         button.addEventListener("click", () => {
             createPetalBurst();
-            setTimeout(() => showPage(0), 350);
+            setTimeout(() => showPage(0), 250);
         });
     });
 
@@ -2540,16 +2858,211 @@ function initStoryEngine() {
     }, {passive:true});
 
     journeyApp.addEventListener("touchend", event => {
-        const difference =
-            touchStartX - event.changedTouches[0].screenX;
-
-        if (Math.abs(difference) > 60) {
-            showPage(currentPage + (difference > 0 ? 1 : -1));
-        }
+        const difference = touchStartX - event.changedTouches[0].screenX;
+        if (Math.abs(difference) > 60) showPage(currentPage + (difference > 0 ? 1 : -1));
     }, {passive:true});
 
     setInterval(createPetal, 900);
     createPetalBurst();
+}
+
+/* =========================================================
+   TIMELINE
+   ========================================================= */
+
+async function renderTimeline() {
+    const mount = $("timelineMount");
+
+    mount.innerHTML = `
+      <div class="timeline-shell">
+        <div class="timeline-top">
+          <div class="timeline-kicker">our little scrapbook</div>
+          <h1 class="timeline-title">Our Love Story ♡</h1>
+          <p class="timeline-subtitle">
+            A little road made from all the moments that became us.
+          </p>
+        </div>
+        <div class="timeline-board">
+          <div class="timeline-map-label">our journey of love</div>
+          <div class="timeline-empty">
+            <div class="loading-heart">♥</div>
+            <div class="hand">Gathering our little milestones...</div>
+          </div>
+        </div>
+      </div>`;
+
+    try {
+        const memories = await loadMemories();
+
+        if (!memories.length) {
+            mount.querySelector(".timeline-board").innerHTML = `
+              <div class="timeline-empty">
+                <div class="big-heart"></div>
+                <h2 class="title">Our road is waiting...</h2>
+                <div class="hand">
+                  Add your first memory and the journey will begin. ♡
+                </div>
+              </div>`;
+            return;
+        }
+
+        const slots = 15;
+        const items = memories.slice(0, slots);
+
+        const nodeMarkup = items.map((memory, index) => {
+            const urls = normalizeMemoryImages(memory);
+            return `
+              <div class="timeline-stop" data-memory-index="${index}">
+                <button class="timeline-node" type="button"
+                        aria-label="Open ${escapeHtml(memory.title || "memory")}"
+                        aria-expanded="false">
+                    ${index === 0 ? "♡" : "♥"}
+                </button>
+
+                <div class="timeline-mini">
+                    <div class="timeline-card-title">
+                        ${escapeHtml(memory.title || "A little memory")}
+                    </div>
+                    <div class="timeline-card-date">
+                        ${escapeHtml(formatDate(memory.memoryDate))}
+                    </div>
+                </div>
+
+                <div class="timeline-card" aria-hidden="true">
+                    <button class="timeline-close-inline" type="button"
+                            aria-label="Close memory">×</button>
+                    <div class="small-title">a little stop on our road</div>
+                    <h3 class="timeline-card-title">
+                        ${escapeHtml(memory.title || "A little memory")}
+                    </h3>
+                    <div class="timeline-card-date">
+                        ${escapeHtml(formatDate(memory.memoryDate))}
+                    </div>
+
+                    ${urls.length ? `
+                      <div class="timeline-detail-images">
+                        ${urls.slice(0,4).map(url => `
+                          <img src="${escapeHtml(url)}" alt="" loading="lazy"
+                               onerror="this.style.opacity='.18'">
+                        `).join("")}
+                      </div>` : ""}
+
+                    <div class="timeline-detail-inline">
+                      <div class="timeline-detail-text">
+                        ${descriptionToParagraphs(memory.description)}
+                      </div>
+                      <div class="timeline-detail-caption">
+                        ${escapeHtml(memory.caption || "another little piece of us ♡")}
+                      </div>
+                    </div>
+                </div>
+              </div>`;
+        }).join("");
+
+        /*
+         * The road itself is a single SVG path. The milestone HTML sits
+         * above it, so the layout remains crisp instead of becoming a
+         * pile of overlapping CSS lines.
+         */
+        mount.querySelector(".timeline-board").innerHTML = `
+          <div class="timeline-map-label">our journey of love</div>
+
+          <svg class="timeline-road-svg" viewBox="0 0 1000 620"
+               preserveAspectRatio="none" aria-hidden="true">
+            <path class="timeline-road-shadow"
+              d="M70 80 H930 Q965 80 965 115 V175 Q965 210 930 210 H70
+                 Q35 210 35 245 V305 Q35 340 70 340 H930
+                 Q965 340 965 375 V435 Q965 470 930 470 H70
+                 Q35 470 35 505 V540"/>
+            <path class="timeline-road-base"
+              d="M70 80 H930 Q965 80 965 115 V175 Q965 210 930 210 H70
+                 Q35 210 35 245 V305 Q35 340 70 340 H930
+                 Q965 340 965 375 V435 Q965 470 930 470 H70
+                 Q35 470 35 505 V540"/>
+            <path class="timeline-road"
+              d="M70 80 H930 Q965 80 965 115 V175 Q965 210 930 210 H70
+                 Q35 210 35 245 V305 Q35 340 70 340 H930
+                 Q965 340 965 375 V435 Q965 470 930 470 H70
+                 Q35 470 35 505 V540"/>
+            <path class="timeline-road-highlight"
+              d="M70 80 H930 Q965 80 965 115 V175 Q965 210 930 210 H70
+                 Q35 210 35 245 V305 Q35 340 70 340 H930
+                 Q965 340 965 375 V435 Q965 470 930 470 H70
+                 Q35 470 35 505 V540"/>
+          </svg>
+
+          ${nodeMarkup}
+
+          <div class="timeline-end">and the road keeps going... ∞</div>
+        `;
+
+        const stops = [...mount.querySelectorAll(".timeline-stop")];
+
+        const closeAllStops = () => {
+            stops.forEach(stop => {
+                stop.classList.remove("is-open");
+                stop.querySelector(".timeline-node")
+                    ?.setAttribute("aria-expanded", "false");
+                stop.querySelector(".timeline-card")
+                    ?.setAttribute("aria-hidden", "true");
+            });
+        };
+
+        const openStop = stop => {
+            const wasOpen = stop.classList.contains("is-open");
+            closeAllStops();
+
+            if (wasOpen) return;
+
+            stop.classList.add("is-open");
+            stop.querySelector(".timeline-node")
+                ?.setAttribute("aria-expanded", "true");
+            stop.querySelector(".timeline-card")
+                ?.setAttribute("aria-hidden", "false");
+
+            // On small screens, make the selected milestone/detail visible.
+            if (window.innerWidth <= 720) {
+                requestAnimationFrame(() => {
+                    stop.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
+                    });
+                });
+            }
+        };
+
+        stops.forEach(stop => {
+            const node = stop.querySelector(".timeline-node");
+            const close = stop.querySelector(".timeline-close-inline");
+
+            node?.addEventListener("click", event => {
+                event.stopPropagation();
+                openStop(stop);
+            });
+
+            close?.addEventListener("click", event => {
+                event.stopPropagation();
+                closeAllStops();
+                node?.focus();
+            });
+        });
+
+    } catch (error) {
+        console.error(error);
+        mount.innerHTML = `
+          <div class="timeline-shell">
+            <div class="timeline-board">
+              <div class="timeline-empty">
+                <div class="paper">
+                  <h2 class="title">The road paused ♡</h2>
+                  <div class="memory">
+                    <p>${escapeHtml(error.message || "Unable to load memories.")}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>`;
+    }
 }
 
 /* =========================================================
